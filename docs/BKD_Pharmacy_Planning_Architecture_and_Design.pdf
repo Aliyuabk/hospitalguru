@@ -1,0 +1,618 @@
+%PDF-1.4
+%BKD Planning
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 9 /Kids [6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R 22 0 R] >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Length 1867 >>
+stream
+1 0 0 -1 0 842 cm
+0.918 0.961 0.945 rg 0 0 595 842 re f
+0.067 0.42 0.322 rg 0 0 595 12 re f
+1 1 1 rg 1 1 1 RG 1 w 40 52 118 28 re B
+0.067 0.42 0.322 rg BT /F2 9 Tf 1 0 0 -1 54 70 Tm (PLANNING DOCUMENT) Tj ET
+0.067 0.42 0.322 rg BT /F2 14 Tf 1 0 0 -1 42 170 Tm (GENERAL HOSPITAL BKD) Tj ET
+0.09 0.208 0.184 rg BT /F2 34 Tf 1 0 0 -1 42 235 Tm (PHARMACY SYSTEM) Tj ET
+0.09 0.208 0.184 rg BT /F2 34 Tf 1 0 0 -1 42 281 Tm (Architecture &) Tj ET
+0.09 0.208 0.184 rg BT /F2 34 Tf 1 0 0 -1 42 327 Tm (Page Design Plan) Tj ET
+0.388 0.451 0.427 rg BT /F1 13 Tf 1 0 0 -1 44 405 Tm (A practical blueprint for the first release, pharmacy workflows,) Tj ET
+0.388 0.451 0.427 rg BT /F1 13 Tf 1 0 0 -1 44 426 Tm (local and cloud operation, and the user interface concept.) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 501 511 178 re B
+0.067 0.42 0.322 rg BT /F2 10 Tf 1 0 0 -1 62 535 Tm (PLANNING SCOPE) Tj ET
+0.141 0.2 0.184 rg BT /F1 12 Tf 1 0 0 -1 62 566 Tm (Drug catalogue, stock and inter-unit transfers) Tj ET
+0.141 0.2 0.184 rg BT /F1 12 Tf 1 0 0 -1 62 589 Tm (POS sales and payment recording) Tj ET
+0.141 0.2 0.184 rg BT /F1 12 Tf 1 0 0 -1 62 612 Tm (Patient prescriptions and dispensing) Tj ET
+0.141 0.2 0.184 rg BT /F1 12 Tf 1 0 0 -1 62 635 Tm (Physical stock counts and reconciliation) Tj ET
+0.141 0.2 0.184 rg BT /F1 12 Tf 1 0 0 -1 62 658 Tm (Offline operation, staff accounts and text chat) Tj ET
+0.09 0.208 0.184 rg BT /F2 10 Tf 1 0 0 -1 42 751 Tm (Prepared for General Hospital BKD  |  Kowaguru Technology Limited) Tj ET
+0.388 0.451 0.427 rg BT /F1 9 Tf 1 0 0 -1 42 773 Tm (18 October 2026  |  Version 1.0  |  Requirements and designs for review) Tj ET
+0.851 0.894 0.875 RG 1 w 42 805 m 553 805 l S
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 42 824 Tm (BKD PHARMACY  /  PLANNING CONCEPT  /  FOR REVIEW) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 535 824 Tm (01) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 3929 >>
+stream
+1 0 0 -1 0 842 cm
+0.96 0.98 0.97 rg 0 0 595 842 re f
+0.067 0.42 0.32 rg 0 0 595 8 re f
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 34 Tm (GENERAL HOSPITAL BKD  /  PHARMACY SYSTEM PLANNING) Tj ET
+0.09 0.208 0.184 rg BT /F2 25 Tf 1 0 0 -1 42 69 Tm (Confirmed scope & module map) Tj ET
+0.851 0.894 0.875 RG 42 86 m 553 86 l S
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 105 247 170 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 56 128 Tm (CLIENT CONFIRMATIONS) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 150 Tm (Initial feature scope accepted) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 165 Tm (Allow more pharmacy units and staff) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 180 Tm (Hospital server, with cloud support) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 195 Tm (MD remote access through VPN) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 210 Tm (Fixed medicine prices) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 225 Tm (NHIS can follow in a later release) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 240 Tm (Existing stock and price records exist) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 255 Tm (Hardware selection: recommend suitable devices) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 303 105 250 170 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 317 128 Tm (FIRST RELEASE MODULES) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 150 Tm (Catalogue and fixed-price setup) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 165 Tm (Receiving, balances and transfers) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 180 Tm (POS, receipts and payment methods) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 195 Tm (Patient records and prescriptions) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 210 Tm (Physical stock count and adjustment) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 225 Tm (Low-stock and near-expiry alerts) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 240 Tm (Staff accounts, roles and reports) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 255 Tm (Offline sales queue and synchronization) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 270 Tm (Text-only staff-to-staff chat) Tj ET
+0.824 0.608 0.18 rg BT /F2 8 Tf 1 0 0 -1 42 312 Tm (LATER PHASE) Tj ET
+1 0.988 0.957 rg 0.918 0.863 0.718 RG 1 w 42 327 511 113 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 56 350 Tm (DEFERRED / OPTIONAL MODULES) Tj ET
+0.141 0.2 0.184 rg BT /F1 10 Tf 1 0 0 -1 56 372 Tm (NHIS claims; controlled-drug registers; broader hospital integrations) Tj ET
+0.141 0.2 0.184 rg BT /F1 10 Tf 1 0 0 -1 56 390 Tm (Advanced management reports; formal receiving approvals; POS terminal integration) Tj ET
+0.141 0.2 0.184 rg BT /F1 10 Tf 1 0 0 -1 56 408 Tm (Physical count is important to the client and is included in the first release plan.) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 478 Tm (HARDWARE STARTING RECOMMENDATION) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 493 511 187 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 56 516 Tm (PERIPHERALS TO CONFIRM WITH THE HOSPITAL) Tj ET
+0.141 0.2 0.184 rg BT /F1 10 Tf 1 0 0 -1 56 538 Tm (USB 1D/2D barcode scanner for medicine packs and product codes) Tj ET
+0.141 0.2 0.184 rg BT /F1 10 Tf 1 0 0 -1 56 558 Tm (Thermal receipt printer \(for example, Epson TM-T20 series or equivalent\)) Tj ET
+0.141 0.2 0.184 rg BT /F1 10 Tf 1 0 0 -1 56 578 Tm (Direct thermal label printer for patient medicine labels) Tj ET
+0.141 0.2 0.184 rg BT /F1 10 Tf 1 0 0 -1 56 598 Tm (UPS for the local server, network equipment and pharmacy workstations) Tj ET
+0.141 0.2 0.184 rg BT /F1 10 Tf 1 0 0 -1 56 618 Tm (Confirm Windows, paper width, drivers, barcode format and service availability before purchasing) Tj ET
+0.851 0.894 0.875 RG 1 w 42 805 m 553 805 l S
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 42 824 Tm (BKD PHARMACY  /  PLANNING CONCEPT  /  FOR REVIEW) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 535 824 Tm (02) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 4280 >>
+stream
+1 0 0 -1 0 842 cm
+0.96 0.98 0.97 rg 0 0 595 842 re f
+0.067 0.42 0.32 rg 0 0 595 8 re f
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 34 Tm (GENERAL HOSPITAL BKD  /  PHARMACY SYSTEM PLANNING) Tj ET
+0.09 0.208 0.184 rg BT /F2 25 Tf 1 0 0 -1 42 69 Tm (Users, permissions & daily workflows) Tj ET
+0.851 0.894 0.875 RG 42 86 m 553 86 l S
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 108 250 151 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 56 131 Tm (Pharmacy staff) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 153 Tm (Search and scan items) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 169 Tm (Create POS sales / record tender) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 185 Tm (View available stock) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 201 Tm (Dispense against prescription) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 217 Tm (Receive stock-count assignments) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 303 108 250 151 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 317 131 Tm (Storekeeper) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 153 Tm (Receive and transfer stock) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 169 Tm (Maintain central store balance) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 185 Tm (Prepare count sessions) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 201 Tm (Review discrepancy reasons) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 278 250 151 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 56 301 Tm (HOD / pharmacy lead) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 323 Tm (Manage catalogue and fixed prices) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 339 Tm (Approve stock adjustments) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 355 Tm (Manage pharmacy units and staff) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 371 Tm (Review sales, expiry and count reports) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 303 278 250 151 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 317 301 Tm (MD / management) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 323 Tm (View authorized reports remotely) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 339 Tm (Connect through hospital VPN) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 355 Tm (Review backup and service status) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 476 Tm (CORE TRANSACTION PATH) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 45 500 88 76 re B
+0.067 0.42 0.322 rg BT /F2 15 Tf 1 0 0 -1 57 526 Tm (1) Tj ET
+0.09 0.208 0.184 rg BT /F2 9 Tf 1 0 0 -1 57 552 Tm (Receive) Tj ET
+0.067 0.42 0.322 RG 2 w 134 538 m 145 538 l S
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 148 500 88 76 re B
+0.067 0.42 0.322 rg BT /F2 15 Tf 1 0 0 -1 160 526 Tm (2) Tj ET
+0.09 0.208 0.184 rg BT /F2 9 Tf 1 0 0 -1 160 552 Tm (Store / transfer) Tj ET
+0.067 0.42 0.322 RG 2 w 237 538 m 248 538 l S
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 251 500 88 76 re B
+0.067 0.42 0.322 rg BT /F2 15 Tf 1 0 0 -1 263 526 Tm (3) Tj ET
+0.09 0.208 0.184 rg BT /F2 9 Tf 1 0 0 -1 263 552 Tm (Sell / dispense) Tj ET
+0.067 0.42 0.322 RG 2 w 340 538 m 351 538 l S
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 354 500 88 76 re B
+0.067 0.42 0.322 rg BT /F2 15 Tf 1 0 0 -1 366 526 Tm (4) Tj ET
+0.09 0.208 0.184 rg BT /F2 9 Tf 1 0 0 -1 366 552 Tm (Count) Tj ET
+0.067 0.42 0.322 RG 2 w 443 538 m 454 538 l S
+1 0.988 0.957 rg 0.918 0.863 0.718 RG 1 w 457 500 88 76 re B
+0.067 0.42 0.322 rg BT /F2 15 Tf 1 0 0 -1 469 526 Tm (5) Tj ET
+0.09 0.208 0.184 rg BT /F2 9 Tf 1 0 0 -1 469 552 Tm (Reconcile) Tj ET
+0.918 0.961 0.945 rg 0.918 0.961 0.945 RG 1 w 42 606 511 90 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 56 629 Tm (CONTROL RULES) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 651 Tm (Use named accounts and role-based permissions; log stock movements, adjustments and returns.) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 667 Tm (A stock adjustment records system quantity, counted quantity, variance, reason and approver.) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 683 Tm (Keep local sales available during network interruptions; sync safely when connectivity returns.) Tj ET
+0.851 0.894 0.875 RG 1 w 42 805 m 553 805 l S
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 42 824 Tm (BKD PHARMACY  /  PLANNING CONCEPT  /  FOR REVIEW) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 535 824 Tm (03) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 4400 >>
+stream
+1 0 0 -1 0 842 cm
+0.96 0.98 0.97 rg 0 0 595 842 re f
+0.067 0.42 0.32 rg 0 0 595 8 re f
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 34 Tm (GENERAL HOSPITAL BKD  /  PHARMACY SYSTEM PLANNING) Tj ET
+0.09 0.208 0.184 rg BT /F2 25 Tf 1 0 0 -1 42 69 Tm (System architecture & deployment) Tj ET
+0.851 0.894 0.875 RG 42 86 m 553 86 l S
+0.949 0.973 0.961 rg 0.749 0.847 0.808 RG 1 w 42 113 336 412 re B
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 58 139 Tm (HOSPITAL NETWORK / LAN) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 62 158 135 79 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 76 181 Tm (Pharmacy workstations) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 76 203 Tm (Browser or desktop client) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 76 216 Tm (Scanners / receipt / label printer) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 222 158 137 79 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 236 181 Tm (Other pharmacy units) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 236 203 Tm (Staff accounts) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 236 216 Tm (Future departments) Tj ET
+0.918 0.961 0.945 rg 0.608 0.788 0.714 RG 1 w 100 277 214 91 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 114 300 Tm (Local application server) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 114 322 Tm (Frontend + API) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 114 337 Tm (LAN access; local IP discovery) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 114 352 Tm (One authoritative writer) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 100 407 214 81 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 114 430 Tm (Hospital database) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 114 452 Tm (MySQL / MariaDB) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 114 467 Tm (Transactions, permissions, audit trail) Tj ET
+0.067 0.42 0.322 RG 2 w 130 238 m 174 276 l S
+0.067 0.42 0.322 RG 2 w 286 238 m 240 276 l S
+0.067 0.42 0.322 RG 2 w 207 368 m 207 405 l S
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 396 113 157 412 re B
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 412 139 Tm (REMOTE & RESILIENCE) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 411 158 127 96 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 425 181 Tm (MD remote access) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 425 203 Tm (Hospital VPN) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 425 217 Tm (Authorized account) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 425 231 Tm (No public database port) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 411 280 127 98 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 425 303 Tm (Encrypted cloud recovery) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 425 325 Tm (Backup copy / recovery site) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 425 339 Tm (VPN or secure tunnel) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 425 353 Tm (Restore procedure needed) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 411 407 127 81 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 425 430 Tm (Offline workflow) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 425 452 Tm (Local queue) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 425 466 Tm (Unique transaction IDs) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 425 480 Tm (Retry / duplicate checks) Tj ET
+0.278 0.49 0.659 RG 2 w 378 198 m 410 198 l S
+0.278 0.49 0.659 RG 2 w 378 331 m 410 331 l S
+0.824 0.608 0.18 RG 2 w 378 448 m 410 448 l S
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 565 Tm (KEY DEPLOYMENT RECOMMENDATION) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 580 511 121 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 56 603 Tm (KEEP THE HOSPITAL LAN FAST AND THE DATA CONSISTENT) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 625 Tm (Local server and local database serve pharmacy users during normal operation.) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 642 Tm (Use encrypted, scheduled backups to cloud storage or an approved recovery server.) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 659 Tm (Avoid multi-master writes until conflict handling and recovery are deliberately designed.) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 676 Tm (Define backup schedule, retention, recovery time and recovery point with hospital management.) Tj ET
+0.851 0.894 0.875 RG 1 w 42 805 m 553 805 l S
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 42 824 Tm (BKD PHARMACY  /  PLANNING CONCEPT  /  FOR REVIEW) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 535 824 Tm (04) Tj ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 5181 >>
+stream
+1 0 0 -1 0 842 cm
+0.96 0.98 0.97 rg 0 0 595 842 re f
+0.067 0.42 0.32 rg 0 0 595 8 re f
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 34 Tm (GENERAL HOSPITAL BKD  /  PHARMACY SYSTEM PLANNING) Tj ET
+0.09 0.208 0.184 rg BT /F2 25 Tf 1 0 0 -1 42 69 Tm (Page design  |  dashboard & inventory) Tj ET
+0.851 0.894 0.875 RG 42 86 m 553 86 l S
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 110 511 340 re B
+0.067 0.42 0.322 rg 42 110 104 340 re f
+1 1 1 rg BT /F2 9 Tf 1 0 0 -1 54 134 Tm (BKD  PHARMACY) Tj ET
+0.165 0.502 0.408 rg 0.165 0.502 0.408 RG 1 w 49 152 90 22 re B
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 167 Tm (Dashboard) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 194 Tm (Inventory) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 221 Tm (Point of Sale) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 248 Tm (Stock Counts) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 275 Tm (Patients) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 302 Tm (Reports) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 329 Tm (Staff Chat) Tj ET
+0.09 0.208 0.184 rg BT /F2 13 Tf 1 0 0 -1 161 134 Tm (Pharmacy overview) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 161 146 376 25 re B
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 171 162 Tm (Search  /  Notifications  /  Profile) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 170 157 164 54 re B
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 180 176 Tm (Today sales) Tj ET
+0.09 0.208 0.184 rg BT /F2 14 Tf 1 0 0 -1 180 198 Tm ( 245,600) Tj ET
+1 0.988 0.957 rg 0.851 0.894 0.875 RG 1 w 348 157 164 54 re B
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 358 176 Tm (Items low) Tj ET
+0.09 0.208 0.184 rg BT /F2 14 Tf 1 0 0 -1 358 198 Tm (08) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 170 224 164 54 re B
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 180 243 Tm (Near expiry) Tj ET
+0.09 0.208 0.184 rg BT /F2 14 Tf 1 0 0 -1 180 265 Tm (12) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 348 224 164 54 re B
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 358 243 Tm (Pending counts) Tj ET
+0.09 0.208 0.184 rg BT /F2 14 Tf 1 0 0 -1 358 265 Tm (02) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 170 300 340 116 re B
+0.388 0.451 0.427 rg BT /F2 8 Tf 1 0 0 -1 181 322 Tm (Sales trend  /  stock alerts  /  recent activity) Tj ET
+0.851 0.894 0.875 RG 1 w 190 385 m 480 385 l S
+0.067 0.42 0.322 RG 5 w 200 374 m 200 385 l S
+0.067 0.42 0.322 RG 5 w 240 361 m 240 385 l S
+0.067 0.42 0.322 RG 5 w 280 348 m 280 385 l S
+0.067 0.42 0.322 RG 5 w 320 374 m 320 385 l S
+0.067 0.42 0.322 RG 5 w 360 361 m 360 385 l S
+0.067 0.42 0.322 RG 5 w 400 348 m 400 385 l S
+0.067 0.42 0.322 RG 5 w 440 374 m 440 385 l S
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 490 Tm (INVENTORY WORKSPACE) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 510 511 220 re B
+0.067 0.42 0.322 rg 42 510 104 220 re f
+1 1 1 rg BT /F2 9 Tf 1 0 0 -1 54 534 Tm (BKD  PHARMACY) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 567 Tm (Dashboard) Tj ET
+0.165 0.502 0.408 rg 0.165 0.502 0.408 RG 1 w 49 579 90 22 re B
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 594 Tm (Inventory) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 621 Tm (Point of Sale) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 648 Tm (Stock Counts) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 675 Tm (Patients) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 702 Tm (Reports) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 729 Tm (Staff Chat) Tj ET
+0.09 0.208 0.184 rg BT /F2 13 Tf 1 0 0 -1 161 534 Tm (Stock balances) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 161 546 376 25 re B
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 171 562 Tm (Search  /  Notifications  /  Profile) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 170 590 Tm (Medicine) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 238 590 Tm (Unit) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 306 590 Tm (On hand) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 374 590 Tm (Reorder) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 442 590 Tm (Expiry) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 170 614 Tm (Paracetamol 500mg) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 238 614 Tm (Central) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 306 614 Tm (420) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 374 614 Tm (100) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 442 614 Tm (2027-04) Tj ET
+0.851 0.894 0.875 RG 0.5 w 169 622 m 526 622 l S
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 170 644 Tm (Amoxicillin 250mg) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 238 644 Tm (OPD) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 306 644 Tm (36) Tj ET
+0.722 0.29 0.259 rg BT /F1 7 Tf 1 0 0 -1 374 644 Tm (60) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 442 644 Tm (2026-12) Tj ET
+0.851 0.894 0.875 RG 0.5 w 169 652 m 526 652 l S
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 170 674 Tm (ORS sachet) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 238 674 Tm (Main) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 306 674 Tm (18) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 374 674 Tm (50) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 442 674 Tm (2027-01) Tj ET
+0.851 0.894 0.875 RG 0.5 w 169 682 m 526 682 l S
+0.851 0.894 0.875 RG 1 w 42 805 m 553 805 l S
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 42 824 Tm (BKD PHARMACY  /  PLANNING CONCEPT  /  FOR REVIEW) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 535 824 Tm (05) Tj ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 5288 >>
+stream
+1 0 0 -1 0 842 cm
+0.96 0.98 0.97 rg 0 0 595 842 re f
+0.067 0.42 0.32 rg 0 0 595 8 re f
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 34 Tm (GENERAL HOSPITAL BKD  /  PHARMACY SYSTEM PLANNING) Tj ET
+0.09 0.208 0.184 rg BT /F2 25 Tf 1 0 0 -1 42 69 Tm (Page design  |  POS & physical stock count) Tj ET
+0.851 0.894 0.875 RG 42 86 m 553 86 l S
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 110 Tm (POINT OF SALE) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 128 511 247 re B
+0.067 0.42 0.322 rg 42 128 104 247 re f
+1 1 1 rg BT /F2 9 Tf 1 0 0 -1 54 152 Tm (BKD  PHARMACY) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 185 Tm (Dashboard) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 212 Tm (Inventory) Tj ET
+0.165 0.502 0.408 rg 0.165 0.502 0.408 RG 1 w 49 224 90 22 re B
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 239 Tm (Point of Sale) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 266 Tm (Stock Counts) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 293 Tm (Patients) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 320 Tm (Reports) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 347 Tm (Staff Chat) Tj ET
+0.09 0.208 0.184 rg BT /F2 13 Tf 1 0 0 -1 161 152 Tm (New sale) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 161 164 376 25 re B
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 171 180 Tm (Search  /  Notifications  /  Profile) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 170 174 208 34 re B
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 181 195 Tm (Scan barcode or search medicine) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 174 234 Tm (Item) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 241 234 Tm (Qty) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 308 234 Tm (Price) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 375 234 Tm (Total) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 174 258 Tm (Paracetamol 500mg) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 241 258 Tm (2) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 308 258 Tm ( 250) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 375 258 Tm ( 500) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 174 285 Tm (Vitamin C 100mg) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 241 285 Tm (1) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 308 285 Tm ( 1,200) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 375 285 Tm ( 1,200) Tj ET
+0.918 0.961 0.945 rg 0.918 0.961 0.945 RG 1 w 390 224 133 120 re B
+0.09 0.208 0.184 rg BT /F2 10 Tf 1 0 0 -1 402 249 Tm (TOTAL   1,700) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 402 275 Tm (Cash / POS / transfer) Tj ET
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 402 296 Tm (Patient / prescription) Tj ET
+1 1 1 rg 1 1 1 RG 1 w 402 310 98 22 re B
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 412 325 Tm (Complete sale) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 421 Tm (PHYSICAL STOCK COUNT) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 440 511 247 re B
+0.067 0.42 0.322 rg 42 440 104 247 re f
+1 1 1 rg BT /F2 9 Tf 1 0 0 -1 54 464 Tm (BKD  PHARMACY) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 497 Tm (Dashboard) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 524 Tm (Inventory) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 551 Tm (Point of Sale) Tj ET
+0.165 0.502 0.408 rg 0.165 0.502 0.408 RG 1 w 49 563 90 22 re B
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 578 Tm (Stock Counts) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 605 Tm (Patients) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 632 Tm (Reports) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 659 Tm (Staff Chat) Tj ET
+0.09 0.208 0.184 rg BT /F2 13 Tf 1 0 0 -1 161 464 Tm (Count session  /  OPD pharmacy) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 161 476 376 25 re B
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 171 492 Tm (Search  /  Notifications  /  Profile) Tj ET
+0.918 0.961 0.945 rg 0.918 0.961 0.945 RG 1 w 170 488 142 22 re B
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 180 503 Tm (Session: October cycle) Tj ET
+1 0.988 0.957 rg 1 0.988 0.957 RG 1 w 321 488 125 22 re B
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 331 503 Tm (Status: in progress) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 170 534 Tm (Medicine) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 237 534 Tm (System) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 304 534 Tm (Counted) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 371 534 Tm (Variance) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 438 534 Tm (Reason) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 170 559 Tm (Amoxicillin) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 237 559 Tm (36) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 304 559 Tm (31) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 371 559 Tm (-5) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 438 559 Tm (Breakage?) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 170 588 Tm (ORS sachet) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 237 588 Tm (18) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 304 588 Tm (20) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 371 588 Tm (+2) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 438 588 Tm (Counted) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 170 620 353 42 re B
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 181 646 Tm (Review variances    enter reason    submit for approval) Tj ET
+0.851 0.894 0.875 RG 1 w 42 805 m 553 805 l S
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 42 824 Tm (BKD PHARMACY  /  PLANNING CONCEPT  /  FOR REVIEW) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 535 824 Tm (06) Tj ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Length 4903 >>
+stream
+1 0 0 -1 0 842 cm
+0.96 0.98 0.97 rg 0 0 595 842 re f
+0.067 0.42 0.32 rg 0 0 595 8 re f
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 34 Tm (GENERAL HOSPITAL BKD  /  PHARMACY SYSTEM PLANNING) Tj ET
+0.09 0.208 0.184 rg BT /F2 25 Tf 1 0 0 -1 42 69 Tm (Page design  |  patients & reports) Tj ET
+0.851 0.894 0.875 RG 42 86 m 553 86 l S
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 112 Tm (PATIENT AND PRESCRIPTION-LINKED DISPENSING) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 130 511 243 re B
+0.067 0.42 0.322 rg 42 130 104 243 re f
+1 1 1 rg BT /F2 9 Tf 1 0 0 -1 54 154 Tm (BKD  PHARMACY) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 187 Tm (Dashboard) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 214 Tm (Inventory) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 241 Tm (Point of Sale) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 268 Tm (Stock Counts) Tj ET
+0.165 0.502 0.408 rg 0.165 0.502 0.408 RG 1 w 49 280 90 22 re B
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 295 Tm (Patients) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 322 Tm (Reports) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 349 Tm (Staff Chat) Tj ET
+0.09 0.208 0.184 rg BT /F2 13 Tf 1 0 0 -1 161 154 Tm (Patient record  /  prescriptions) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 161 166 376 25 re B
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 171 182 Tm (Search  /  Notifications  /  Profile) Tj ET
+0.918 0.961 0.945 rg 0.918 0.961 0.945 RG 1 w 170 174 340 50 re B
+0.09 0.208 0.184 rg BT /F2 9 Tf 1 0 0 -1 183 197 Tm (Patient:  A. Sample  |  Hospital number: GH-004281) Tj ET
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 183 214 Tm (Prescription: Dr. Example  |  18 Oct 2026) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 172 253 Tm (Medicine) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 240 253 Tm (Dose) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 308 253 Tm (Duration) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 376 253 Tm (Qty) Tj ET
+0.388 0.451 0.427 rg BT /F2 7 Tf 1 0 0 -1 444 253 Tm (Label) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 172 280 Tm (Amoxicillin 250mg) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 240 280 Tm (1 capsule) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 308 280 Tm (5 days) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 376 280 Tm (15) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 444 280 Tm (Preview) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 172 307 Tm (Paracetamol 500mg) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 240 307 Tm (2 tablets) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 308 307 Tm (3 days) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 376 307 Tm (18) Tj ET
+0.141 0.2 0.184 rg BT /F1 7 Tf 1 0 0 -1 444 307 Tm (Preview) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 170 320 337 30 re B
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 181 339 Tm (Check stock and pharmacist directions before dispense) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 418 Tm (REPORTS AND MANAGEMENT VIEW) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 436 511 249 re B
+0.067 0.42 0.322 rg 42 436 104 249 re f
+1 1 1 rg BT /F2 9 Tf 1 0 0 -1 54 460 Tm (BKD  PHARMACY) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 493 Tm (Dashboard) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 520 Tm (Inventory) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 547 Tm (Point of Sale) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 574 Tm (Stock Counts) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 601 Tm (Patients) Tj ET
+0.165 0.502 0.408 rg 0.165 0.502 0.408 RG 1 w 49 613 90 22 re B
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 628 Tm (Reports) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 655 Tm (Staff Chat) Tj ET
+0.09 0.208 0.184 rg BT /F2 13 Tf 1 0 0 -1 161 460 Tm (Sales and stock report) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 161 472 376 25 re B
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 171 488 Tm (Search  /  Notifications  /  Profile) Tj ET
+0.918 0.961 0.945 rg 0.918 0.961 0.945 RG 1 w 170 484 52 22 re B
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 180 499 Tm (Daily) Tj ET
+1 1 1 rg 1 1 1 RG 1 w 230 484 60 22 re B
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 240 499 Tm (Weekly) Tj ET
+1 1 1 rg 1 1 1 RG 1 w 298 484 64 22 re B
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 308 499 Tm (Monthly) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 170 522 336 121 re B
+0.388 0.451 0.427 rg BT /F2 8 Tf 1 0 0 -1 183 544 Tm (Sales by day  /  value) Tj ET
+0.608 0.788 0.714 rg 190 583 18 42 re f
+0.608 0.788 0.714 rg 229 563 18 62 re f
+0.608 0.788 0.714 rg 268 577 18 48 re f
+0.608 0.788 0.714 rg 307 542 18 83 re f
+0.608 0.788 0.714 rg 346 558 18 67 re f
+0.067 0.42 0.322 rg 385 524 18 101 re f
+0.608 0.788 0.714 rg 424 549 18 76 re f
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 170 664 Tm (Export sales, stock movement, expiry and count variance reports by permission.) Tj ET
+0.851 0.894 0.875 RG 1 w 42 805 m 553 805 l S
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 42 824 Tm (BKD PHARMACY  /  PLANNING CONCEPT  /  FOR REVIEW) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 535 824 Tm (07) Tj ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 17 0 R >>
+endobj
+19 0 obj
+<< /Length 3653 >>
+stream
+1 0 0 -1 0 842 cm
+0.96 0.98 0.97 rg 0 0 595 842 re f
+0.067 0.42 0.32 rg 0 0 595 8 re f
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 34 Tm (GENERAL HOSPITAL BKD  /  PHARMACY SYSTEM PLANNING) Tj ET
+0.09 0.208 0.184 rg BT /F2 25 Tf 1 0 0 -1 42 69 Tm (Page design  |  staff chat & account controls) Tj ET
+0.851 0.894 0.875 RG 42 86 m 553 86 l S
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 112 Tm (STAFF CHAT \(TEXT ONLY\)) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 130 511 215 re B
+0.067 0.42 0.322 rg 42 130 104 215 re f
+1 1 1 rg BT /F2 9 Tf 1 0 0 -1 54 154 Tm (BKD  PHARMACY) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 187 Tm (Dashboard) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 214 Tm (Inventory) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 241 Tm (Point of Sale) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 268 Tm (Stock Counts) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 295 Tm (Patients) Tj ET
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 322 Tm (Reports) Tj ET
+0.165 0.502 0.408 rg 0.165 0.502 0.408 RG 1 w 49 334 90 22 re B
+1 1 1 rg BT /F1 7 Tf 1 0 0 -1 58 349 Tm (Staff Chat) Tj ET
+0.09 0.208 0.184 rg BT /F2 13 Tf 1 0 0 -1 161 154 Tm (Pharmacy team) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 161 166 376 25 re B
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 171 182 Tm (Search  /  Notifications  /  Profile) Tj ET
+0.965 0.976 0.969 rg 0.851 0.894 0.875 RG 1 w 174 179 224 33 re B
+0.141 0.2 0.184 rg BT /F1 8 Tf 1 0 0 -1 187 200 Tm (Please verify the OPD stock transfer.) Tj ET
+0.918 0.961 0.945 rg 0.918 0.961 0.945 RG 1 w 290 224 226 34 re B
+0.09 0.208 0.184 rg BT /F1 8 Tf 1 0 0 -1 303 245 Tm (Received. I will check it now.) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 174 273 342 37 re B
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 185 297 Tm (Type a message  ______________________  Send) Tj ET
+0.388 0.451 0.427 rg BT /F1 8 Tf 1 0 0 -1 174 328 Tm (New message receive/send can play a short notification sound.) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 389 Tm (ACCOUNT & APPEARANCE) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 408 245 185 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 56 431 Tm (PROFILE SETTINGS) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 453 Tm (Name and contact information) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 470 Tm (Change password securely) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 487 Tm (Generated avatar \(no media upload\)) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 504 Tm (Notification and privacy settings) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 56 521 Tm (Account session controls) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 303 408 250 185 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 317 431 Tm (APPEARANCE CONTROLS) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 453 Tm (Hospital-green default theme) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 470 Tm (Choose sidebar and topbar colors) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 487 Tm (Adjust icons and interface accents) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 504 Tm (Store theme preference per account) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 317 521 Tm (Powered by Kowaguru Technology Limited) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 625 511 75 re B
+0.067 0.42 0.322 rg BT /F2 10 Tf 1 0 0 -1 58 649 Tm (Privacy boundary) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 58 673 Tm (Staff chat supports text and built-in reactions. No image, video, document or voice-note uploads.) Tj ET
+0.851 0.894 0.875 RG 1 w 42 805 m 553 805 l S
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 42 824 Tm (BKD PHARMACY  /  PLANNING CONCEPT  /  FOR REVIEW) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 535 824 Tm (08) Tj ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 19 0 R >>
+endobj
+21 0 obj
+<< /Length 2850 >>
+stream
+1 0 0 -1 0 842 cm
+0.96 0.98 0.97 rg 0 0 595 842 re f
+0.067 0.42 0.32 rg 0 0 595 8 re f
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 42 34 Tm (GENERAL HOSPITAL BKD  /  PHARMACY SYSTEM PLANNING) Tj ET
+0.09 0.208 0.184 rg BT /F2 25 Tf 1 0 0 -1 42 69 Tm (Implementation roadmap & open decisions) Tj ET
+0.851 0.894 0.875 RG 42 86 m 553 86 l S
+0.918 0.961 0.945 rg 0.918 0.961 0.945 RG 1 w 42 110 511 75 re B
+0.067 0.42 0.322 rg BT /F2 11 Tf 1 0 0 -1 57 134 Tm (01  Foundation) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 57 158 Tm (Review requirements; prepare server and user roles; import item master and opening stock.) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 202 511 75 re B
+0.067 0.42 0.322 rg BT /F2 11 Tf 1 0 0 -1 57 226 Tm (02  Stock operations) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 57 250 Tm (Receiving, transfers, batch/expiry tracking, physical counts and approved adjustments.) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 294 511 75 re B
+0.067 0.42 0.322 rg BT /F2 11 Tf 1 0 0 -1 57 318 Tm (03  Sales & dispensing) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 57 342 Tm (POS, payment recording, receipt/label printing, patient and prescription workflows.) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 386 511 75 re B
+0.067 0.42 0.322 rg BT /F2 11 Tf 1 0 0 -1 57 410 Tm (04  Resilience & reporting) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 57 434 Tm (Offline queue, synchronization, alerts, daily/weekly/monthly reporting and backups.) Tj ET
+1 1 1 rg 0.851 0.894 0.875 RG 1 w 42 478 511 75 re B
+0.067 0.42 0.322 rg BT /F2 11 Tf 1 0 0 -1 57 502 Tm (05  Hardening & rollout) Tj ET
+0.141 0.2 0.184 rg BT /F1 9 Tf 1 0 0 -1 57 526 Tm (Pilot pharmacy, staff training, restore drill, LAN access and VPN management access.) Tj ET
+0.824 0.608 0.18 rg BT /F2 8 Tf 1 0 0 -1 42 600 Tm (CONFIRM BEFORE IMPLEMENTATION SIGN-OFF) Tj ET
+1 0.988 0.957 rg 0.918 0.863 0.718 RG 1 w 42 615 511 95 re B
+0.09 0.208 0.184 rg BT /F2 12 Tf 1 0 0 -1 56 638 Tm (OPEN ITEMS) Tj ET
+0.141 0.2 0.184 rg BT /F1 8.5 Tf 1 0 0 -1 56 660 Tm (Count frequency, count freeze rules and approval thresholds) Tj ET
+0.141 0.2 0.184 rg BT /F1 8.5 Tf 1 0 0 -1 56 674 Tm (Payment-terminal model and integration method; mandatory app tender record) Tj ET
+0.141 0.2 0.184 rg BT /F1 8.5 Tf 1 0 0 -1 56 688 Tm (Server / cloud hosting preference, backup retention, RPO and RTO) Tj ET
+0.141 0.2 0.184 rg BT /F1 8.5 Tf 1 0 0 -1 56 702 Tm (Import file format and mapping; printers/scanners and medicine label layout) Tj ET
+0.141 0.2 0.184 rg BT /F1 8.5 Tf 1 0 0 -1 56 716 Tm (Client accepts NHIS later; confirm any controlled-drug legal requirements when scoped) Tj ET
+0.851 0.894 0.875 RG 1 w 42 805 m 553 805 l S
+0.388 0.451 0.427 rg BT /F1 7 Tf 1 0 0 -1 42 824 Tm (BKD PHARMACY  /  PLANNING CONCEPT  /  FOR REVIEW) Tj ET
+0.067 0.42 0.322 rg BT /F2 8 Tf 1 0 0 -1 535 824 Tm (09) Tj ET
+endstream
+endobj
+22 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 21 0 R >>
+endobj
+xref
+0 23
+0000000000 65535 f 
+0000000023 00000 n 
+0000000072 00000 n 
+0000000184 00000 n 
+0000000254 00000 n 
+0000000329 00000 n 
+0000002248 00000 n 
+0000002384 00000 n 
+0000006365 00000 n 
+0000006501 00000 n 
+0000010833 00000 n 
+0000010970 00000 n 
+0000015423 00000 n 
+0000015561 00000 n 
+0000020795 00000 n 
+0000020933 00000 n 
+0000026274 00000 n 
+0000026412 00000 n 
+0000031368 00000 n 
+0000031506 00000 n 
+0000035212 00000 n 
+0000035350 00000 n 
+0000038253 00000 n 
+trailer
+<< /Size 23 /Root 1 0 R >>
+startxref
+38391
+%%EOF

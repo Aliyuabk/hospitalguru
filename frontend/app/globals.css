@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root { --ink: #172c28; --muted: #7f908a; --line: #e7eeea; --canvas: #f6f8f7; }
+html[data-theme='dark'] { color-scheme: dark; --ink: #e5edf3; --muted: #a6b5c2; --line: #344354; --canvas: #111827; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 14px; }
+html[data-theme='dark'] body { background: var(--canvas); color: var(--ink); }
+html[data-theme='dark'] .bg-white { background-color: #1f2937 !important; }
+html[data-theme='dark'] header:not([data-topbar-themed]) { background-color: rgb(31 41 55 / 95%) !important; border-color: var(--line) !important; }
+html[data-theme='dark'] aside:not(.sidebar-themed), html[data-theme='dark'] [role='dialog'], html[data-theme='dark'] [role='menu'] { background-color: #1f2937 !important; border-color: var(--line) !important; }
+html[data-theme='dark'] [class*='bg-[#f'] { background-color: #172332 !important; }
+html[data-theme='dark'] [class*='bg-[#e'] { background-color: #203443 !important; }
+html[data-theme='dark'] [class*='border-[#'] { border-color: var(--line) !important; }
+html[data-theme='dark'] [class*='text-[#'] { color: #c1ccd6 !important; }
+html[data-theme='dark'] .bg-brand-50 { background-color: #173b32 !important; }
+html[data-theme='dark'] .bg-emerald-50 { background-color: #15392e !important; }
+html[data-theme='dark'] .bg-amber-50 { background-color: #49391c !important; }
+html[data-theme='dark'] .bg-rose-50 { background-color: #48272d !important; }
+html[data-theme='dark'] input, html[data-theme='dark'] select, html[data-theme='dark'] textarea { color: #e5edf3; background-color: #172332; border-color: var(--line); }
+html[data-theme='dark'] input::placeholder, html[data-theme='dark'] textarea::placeholder { color: #91a0ad; }
+html[data-theme='dark'] table thead { background-color: #172332; }
+html[data-theme='dark'] .receipt-print { color: #000; background: #fff; }
+.has-user-appearance .bg-brand-600 { background-color: var(--accent-main) !important; }
+.has-user-appearance .hover\:bg-brand-700:hover { background-color: var(--accent-deep) !important; }
+.has-user-appearance .bg-brand-500 { background-color: var(--accent-main) !important; }
+.has-user-appearance .bg-brand-50 { background-color: var(--accent-light) !important; }
+.has-user-appearance .bg-brand-100 { background-color: color-mix(in srgb, var(--accent-light), white 20%) !important; }
+.has-user-appearance .text-brand-600,.has-user-appearance .text-brand-700 { color: var(--accent-main) !important; }
+.has-user-appearance .border-brand-500 { border-color: var(--accent-main) !important; }
+.has-user-appearance .focus\:border-brand-500:focus { border-color: var(--accent-main) !important; }
+.sidebar-themed { border-color: rgb(255 255 255 / 14%) !important; }
+.sidebar-themed [class*="border-[#"] { border-color: rgb(255 255 255 / 14%) !important; }
+.sidebar-themed [class*="text-[#"] { color: rgb(255 255 255 / 72%) !important; }
+.sidebar-themed [class*="bg-[#f6f9f7]"] { background-color: rgb(255 255 255 / 10%) !important; }
+.sidebar-themed .text-brand-600,.sidebar-themed .text-brand-700 { color: #fff !important; }
+.sidebar-themed .bg-brand-50 { background-color: rgb(255 255 255 / 16%) !important; }
+.sidebar-themed .bg-brand-600 { background-color: rgb(255 255 255 / 20%) !important; }
+.sidebar-themed nav a:hover,.sidebar-themed footer button:hover { color: #fff !important; background-color: rgb(255 255 255 / 12%) !important; }
+.sidebar-themed .bg-brand-50:hover { background-color: rgb(255 255 255 / 20%) !important; }
+header[data-topbar-themed] { border-color: rgb(255 255 255 / 18%) !important; }
+header[data-topbar-themed] .topbar-title,header[data-topbar-themed] .topbar-profile-name { color: #fff !important; }
+header[data-topbar-themed] .topbar-subtitle,header[data-topbar-themed] .topbar-profile-role,header[data-topbar-themed] .topbar-profile-chevron { color: rgb(255 255 255 / 76%) !important; }
+header[data-topbar-themed] .topbar-profile-trigger:hover { background-color: rgb(255 255 255 / 12%) !important; }
+header[data-topbar-themed] button[aria-label="Open navigation"] { color: #fff !important; border-color: rgb(255 255 255 / 38%) !important; }
+h1,h2,h3,h4,.display { font-family: 'Manrope', sans-serif; }
+button,input,select { font: inherit; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.login-screen { animation: screen-arrive .45s ease-out both; }
+.workspace-content { animation: screen-arrive .28s ease-out both; }
+.skip-link { position:fixed; left:1rem; top:1rem; z-index:100; transform:translateY(-160%); border-radius:.75rem; background:#fff; padding:.75rem 1rem; color:#0d5a47; font-size:.875rem; font-weight:700; box-shadow:0 8px 30px rgb(25 57 48 / 15%); }
+.skip-link:focus { transform:translateY(0); }
+.pharmacy-artwork { transform-origin: 50% 55%; animation: pharmacy-float 6s ease-in-out infinite; }
+.loading-card { animation: screen-arrive .28s ease-out both; }
+.loading-orbit { position:relative; animation: loading-breathe 2.2s ease-in-out infinite; }
+.loading-orbit::after { position:absolute; inset:-5px; content:""; border:1px solid #b9e6d2; border-top-color:#117158; border-radius:18px; animation: orbit 2.8s linear infinite; }
+.loading-track-bar { animation: loading-sweep 1.6s ease-in-out infinite; }
+button,a,[role="button"] { transition: color .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease; }
+button:not(:disabled):active,[role="button"]:active { transform:scale(.985); }
+:focus-visible { outline:3px solid #168568; outline-offset:3px; }
+input,select,textarea { transition:border-color .16s ease, box-shadow .16s ease; }
+tbody tr { transition:background-color .14s ease; }
+tbody tr:hover { background-color:#f8fbf9; }
+@keyframes screen-arrive { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes pharmacy-float { 0%,100% { transform:translateY(0) rotate(-.5deg); } 50% { transform:translateY(-8px) rotate(.7deg); } }
+@keyframes loading-breathe { 0%,100% { transform:scale(1); } 50% { transform:scale(1.06); } }
+@keyframes orbit { to { transform:rotate(360deg); } }
+@keyframes loading-sweep { 0% { transform:translateX(-110%); } 60%,100% { transform:translateX(330%); } }
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}
+@media screen {
+  .receipt-print,.patient-label-print { display:none; }
+  .receipt-preview-copy { width:72mm; max-width:100%; min-height:90mm; margin:0 auto; padding:4mm; color:#000; background:#fff; box-shadow:0 2px 12px rgb(0 0 0 / 12%); font-family:Arial,sans-serif; }
+}
+@media print {
+  @page { size:80mm auto; margin:4mm; }
+  html,body { zoom:1 !important; background:#fff !important; }
+  body * { visibility:hidden !important; }
+  body[data-print-target="receipt"] #receipt-print,
+  body[data-print-target="receipt"] #receipt-print *,
+  body[data-print-target="label"] #patient-label,
+  body[data-print-target="label"] #patient-label * { visibility:visible !important; }
+  body[data-print-target="receipt"] #receipt-print,
+  body[data-print-target="label"] #patient-label { display:block !important; position:absolute; left:0; top:0; width:72mm; padding:0; color:#000; background:#fff; font-family:Arial,sans-serif; }
+  .receipt-copy { width:72mm; padding:2mm; color:#000; background:#fff; font-family:Arial,sans-serif; font-size:10pt; }
+  .receipt-copy + .receipt-copy { break-before:page; page-break-before:always; }
+}
