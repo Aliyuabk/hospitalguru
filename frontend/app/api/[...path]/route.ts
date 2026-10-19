@@ -35,16 +35,18 @@ async function read(path: string[], req: NextRequest, user: User) {
   if (root === 'desktop-discovery') return ok({ api_url: '/api' });
   if (root === 'departments') return ok(await getRows(`SELECT id,name,code,type FROM departments WHERE is_active=1 ${user.role === 'pharmacy_staff' ? 'AND id=?' : ''} ORDER BY id`, user.role === 'pharmacy_staff' ? [user.department_id || 0] : []));
   if (root === 'drugs') {
+    const dep = user.role === 'pharmacy_staff' ? user.department_id : num(q.get('department_id')) || null;
+    if (path[1]) {
+      const drug = await one('SELECT * FROM drugs WHERE id=? AND is_active=1', [num(path[1])]);
+      if (!drug) return fail('Drug not found.', 404);
+      (drug as any).stocks = await getRows(`SELECT s.*,dpt.name AS department_name FROM stocks s LEFT JOIN departments dpt ON dpt.id=s.department_id WHERE s.drug_id=? AND s.quantity>0 AND s.expiry_date>=CURDATE() ${dep ? 'AND s.department_id=?' : ''} ORDER BY s.expiry_date`, dep ? [num(path[1]), dep] : [num(path[1])]);
+      return ok(drug);
+    }
     const params: any[] = [];
     const where = ['d.is_active=1'];
     if (q.get('q')) { where.push('(d.name LIKE ? OR d.sku LIKE ? OR d.barcode LIKE ?)'); params.push(...Array(3).fill(`%${q.get('q')}%`)); }
-    const dep = user.role === 'pharmacy_staff' ? user.department_id : num(q.get('department_id')) || null;
     const drugs = await getRows(`SELECT d.* FROM drugs d WHERE ${where.join(' AND ')} ORDER BY d.name LIMIT 100`, params);
     for (const drug of drugs as any[]) drug.stocks = await getRows(`SELECT s.*,dpt.name AS department_name FROM stocks s LEFT JOIN departments dpt ON dpt.id=s.department_id WHERE s.drug_id=? AND s.quantity>0 AND s.expiry_date>=CURDATE() ${dep ? 'AND s.department_id=?' : ''} ORDER BY s.expiry_date`, dep ? [drug.id, dep] : [drug.id]);
-    if (path[1]) {
-      const drug = (drugs as any[]).find(d => d.id === num(path[1]));
-      return drug ? ok(drug) : fail('Drug not found.', 404);
-    }
     return ok(page(drugs as any[], (drugs as any[]).length, 100));
   }
   if (root === 'patients') {
@@ -79,7 +81,7 @@ async function read(path: string[], req: NextRequest, user: User) {
   }
   if (root === 'prescriptions') {
     if (path[1]) {
-      const rx = await one('SELECT p.*,JSON_OBJECT("id",pt.id,"full_name",pt.full_name,"folder_no",pt.folder_no,"phone",pt.phone) patient,JSON_OBJECT("id",u.id,"name",u.name) doctor FROM prescriptions p JOIN patients pt ON pt.id=p.patient_id JOIN users u ON u.id=p.doctor_id WHERE p.id=?', [num(path[1])]);
+      const rx = await one(`SELECT p.*,JSON_OBJECT("id",pt.id,"full_name",pt.full_name,"folder_no",pt.folder_no,"phone",pt.phone) patient,JSON_OBJECT("id",u.id,"name",u.name) doctor FROM prescriptions p JOIN patients pt ON pt.id=p.patient_id JOIN users u ON u.id=p.doctor_id WHERE p.id=? ${user.role === 'doctor' ? 'AND p.doctor_id=?' : ''}`, user.role === 'doctor' ? [num(path[1]), user.id] : [num(path[1])]);
       if (!rx) return fail('Prescription not found.', 404);
       (rx as any).items = await getRows('SELECT i.*,JSON_OBJECT("id",d.id,"name",d.name,"sku",d.sku,"unit",d.unit) drug FROM prescription_items i JOIN drugs d ON d.id=i.drug_id WHERE prescription_id=?', [num(path[1])]);
       return ok(rx);
@@ -130,8 +132,15 @@ async function read(path: string[], req: NextRequest, user: User) {
   }
   if (root === 'sync' && path[1] === 'conflicts') return ok(page(await getRows('SELECT c.*,u.name staff_name,d.name department_name FROM sync_conflicts c JOIN users u ON u.id=c.staff_id JOIN departments d ON d.id=c.department_id WHERE c.status="pending" ORDER BY c.created_at DESC'),100,50));
   if (root === 'users') {
-    if(path[1]) return ok(await one('SELECT u.id,u.name,u.email,u.role,u.department_id,u.is_active,u.created_at,JSON_OBJECT("id",d.id,"name",d.name) department FROM users u LEFT JOIN departments d ON d.id=u.department_id WHERE u.id=?',[num(path[1])]));
-    return ok(page(await getRows('SELECT u.id,u.name,u.email,u.role,u.department_id,u.is_active,u.created_at,JSON_OBJECT("id",d.id,"name",d.name) department FROM users u LEFT JOIN departments d ON d.id=u.department_id ORDER BY u.name LIMIT 200'),200,100));
+    if(path[1]) {
+      const userDetails = await one('SELECT u.id,u.name,u.email,u.role,u.department_id,u.is_active,u.created_at,JSON_OBJECT("id",d.id,"name",d.name) department FROM users u LEFT JOIN departments d ON d.id=u.department_id WHERE u.id=?',[num(path[1])]);
+      return userDetails ? ok(userDetails) : fail('User not found.',404);
+    }
+    const current = Math.max(1, num(q.get('page'), 1));
+    const perPage = 100;
+    const total = Number((await one('SELECT COUNT(*) total FROM users'))?.total || 0);
+    const users = await getRows('SELECT u.id,u.name,u.email,u.role,u.department_id,u.is_active,u.created_at,JSON_OBJECT("id",d.id,"name",d.name) department FROM users u LEFT JOIN departments d ON d.id=u.department_id ORDER BY u.name LIMIT ? OFFSET ?', [perPage, (current - 1) * perPage]);
+    return ok(page(users as any[], total, perPage, current));
   }
   if (root === 'chat' && path[1] === 'contacts') return ok(await getRows("SELECT u.id,u.name,u.role,u.department_id,d.name department,(SELECT body FROM staff_messages m WHERE (m.sender_id=u.id AND m.recipient_id=?) OR (m.sender_id=? AND m.recipient_id=u.id) ORDER BY m.id DESC LIMIT 1) last_message,(SELECT created_at FROM staff_messages m WHERE (m.sender_id=u.id AND m.recipient_id=?) OR (m.sender_id=? AND m.recipient_id=u.id) ORDER BY m.id DESC LIMIT 1) last_message_at,(SELECT COUNT(*) FROM staff_messages m WHERE m.sender_id=u.id AND m.recipient_id=? AND m.read_at IS NULL) unread_count FROM users u LEFT JOIN departments d ON d.id=u.department_id WHERE u.is_active=1 AND u.id<>? ORDER BY last_message_at DESC,u.name",[user.id,user.id,user.id,user.id,user.id,user.id]));
   if (root === 'chat' && path[1] && path[2] === 'messages') {const contact=num(path[1]);const messages=await getRows('SELECT * FROM staff_messages WHERE (sender_id=? AND recipient_id=?) OR (sender_id=? AND recipient_id=?) ORDER BY id ASC LIMIT 100',[user.id,contact,contact,user.id]);await run('UPDATE staff_messages SET read_at=NOW() WHERE sender_id=? AND recipient_id=? AND read_at IS NULL',[contact,user.id]);return ok(messages)}
@@ -152,10 +161,19 @@ async function write(path: string[], req: NextRequest, user: User) {
     return ok(await one('SELECT id,name,email,role,department_id,is_active FROM users WHERE id=?',[user.id]));
   }
   if (root === 'drugs') {
-    if (method === 'POST' && user.role === 'hod') { const r=await run('INSERT INTO drugs(name,barcode,sku,category,unit,is_active,created_at,updated_at) VALUES(?,?,?,?,?,?,NOW(),NOW())',[b.name,b.barcode||null,b.sku,b.category||null,b.unit||'Unit',b.is_active===false?0:1]); return ok(await one('SELECT * FROM drugs WHERE id=?',[r.insertId]),201); }
-    if (path[1] && method === 'PATCH' || path[1] && method === 'PUT') {
+    if (method === 'POST' && user.role === 'hod') {
+      const name=String(b.name||'').trim(), sku=String(b.sku||'').trim(), unit=String(b.unit||'').trim();
+      if(!name||!sku||!unit) return fail('Drug name, SKU and unit are required.',422);
+      const r=await run('INSERT INTO drugs(name,barcode,sku,category,unit,is_active,created_at,updated_at) VALUES(?,?,?,?,?,1,NOW(),NOW())',[name,String(b.barcode||'').trim()||null,sku,String(b.category||'').trim()||null,unit]);
+      return ok(await one('SELECT * FROM drugs WHERE id=?',[r.insertId]),201);
+    }
+    if (path[1] && ['PATCH','PUT'].includes(method)) {
       if (user.role!=='hod') return fail('This action is unauthorized.',403);
-      const allowedFields=['name','barcode','sku','category','unit','is_active']; const f=allowedFields.filter(k=>b[k]!==undefined); if(f.length) await run(`UPDATE drugs SET ${f.map(k=>`${k}=?`).join(',')},updated_at=NOW() WHERE id=?`,[...f.map(k=>b[k]||null),num(path[1])]); return ok(await one('SELECT * FROM drugs WHERE id=?',[num(path[1])]));
+      const allowedFields=['name','barcode','sku','category','unit','is_active']; const f=allowedFields.filter(k=>b[k]!==undefined);
+      if(!await one('SELECT id FROM drugs WHERE id=?',[num(path[1])])) return fail('Drug not found.',404);
+      if(f.some(k=>['name','sku','unit'].includes(k)&&!String(b[k]||'').trim())) return fail('Drug name, SKU and unit cannot be empty.',422);
+      if(f.length) await run(`UPDATE drugs SET ${f.map(k=>`${k}=?`).join(',')},updated_at=NOW() WHERE id=?`,[...f.map(k=>b[k]===''?null:b[k]),num(path[1])]);
+      return ok(await one('SELECT * FROM drugs WHERE id=?',[num(path[1])]));
     }
     if (path[1] && method==='DELETE' && user.role==='hod') { await run('UPDATE drugs SET is_active=0 WHERE id=?',[num(path[1])]); return new NextResponse(null,{status:204}); }
   }
@@ -175,8 +193,38 @@ async function write(path: string[], req: NextRequest, user: User) {
     const conn=await db.getConnection(); try { await conn.beginTransaction(); const [srows]:any=await conn.execute('SELECT * FROM stocks WHERE id=? FOR UPDATE',[b.stock_id]); const s=srows[0]; if(!s||s.quantity<num(b.quantity)) throw new Error('Source batch does not have enough stock.'); await conn.execute('UPDATE stocks SET quantity=quantity-? WHERE id=?',[b.quantity,s.id]); const [existing]:any=await conn.execute('SELECT id FROM stocks WHERE drug_id=? AND department_id=? AND batch_no=? FOR UPDATE',[s.drug_id,b.to_department_id,s.batch_no]); let target=existing[0]; if(target) await conn.execute('UPDATE stocks SET quantity=quantity+? WHERE id=?',[b.quantity,target.id]); else { const [ins]:any=await conn.execute('INSERT INTO stocks(drug_id,department_id,batch_no,quantity,cost_price_naira,selling_price_naira,expiry_date,supplier_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,NOW(),NOW())',[s.drug_id,b.to_department_id,s.batch_no,b.quantity,s.cost_price_naira,s.selling_price_naira,s.expiry_date,s.supplier_id]); target={id:ins.insertId}; } const no=`TRF-${Date.now()}`; const [tr]:any=await conn.execute('INSERT INTO stock_transfers(transfer_no,from_department_id,to_department_id,drug_id,from_stock_id,batch_no,quantity,created_by,status,transferred_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,NOW(),NOW())',[no,s.department_id,b.to_department_id,s.drug_id,s.id,s.batch_no,b.quantity,user.id,'completed',new Date()]); await conn.commit(); return ok(await one('SELECT * FROM stock_transfers WHERE id=?',[tr.insertId]),201); } catch(e:any){await conn.rollback();return fail(e.message||'Transfer failed.',422)} finally{conn.release()}
   }
   if (root==='prescriptions' && method==='POST' && allowed(user,['hod','doctor'])) {
-    if(!Array.isArray(b.items)||!b.items.length) return fail('Add at least one prescription item.');
-    const conn=await db.getConnection(); try { await conn.beginTransaction(); const no=`RX-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${Math.random().toString(36).slice(2,10).toUpperCase()}`; const [ins]:any=await conn.execute('INSERT INTO prescriptions(prescription_no,patient_id,doctor_id,status,notes,prescribed_at,created_at,updated_at) VALUES(?,?,?,"pending",?,NOW(),NOW(),NOW())',[no,b.patient_id,user.id,b.notes||null]); for(const item of b.items) await conn.execute('INSERT INTO prescription_items(prescription_id,drug_id,quantity,dispensed_quantity,dosage,duration,instructions,created_at,updated_at) VALUES(?,?,?,0,?,?,?,NOW(),NOW())',[ins.insertId,item.drug_id,item.quantity,item.dosage||null,item.duration||null,item.instructions||null]); await conn.commit(); return ok(await one('SELECT * FROM prescriptions WHERE id=?',[ins.insertId]),201); } catch(e:any){await conn.rollback();return fail(e.message,422)} finally{conn.release()}
+    if(!Array.isArray(b.items)||!b.items.length) return fail('Add at least one prescription item.',422);
+    if(!Number.isInteger(Number(b.patient_id))||!await one('SELECT id FROM patients WHERE id=?',[num(b.patient_id)])) return fail('Select a valid patient.',422);
+    if(b.items.some((item:any)=>!Number.isInteger(Number(item.drug_id))||!Number.isInteger(Number(item.quantity))||Number(item.quantity)<1)) return fail('Each medicine needs a valid drug and a quantity of at least one.',422);
+    const conn=await db.getConnection(); try { await conn.beginTransaction(); const no=`RX-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${Math.random().toString(36).slice(2,10).toUpperCase()}`; const [ins]:any=await conn.execute('INSERT INTO prescriptions(prescription_no,patient_id,doctor_id,status,notes,prescribed_at,created_at,updated_at) VALUES(?,?,?,"pending",?,NOW(),NOW(),NOW())',[no,b.patient_id,user.id,String(b.notes||'').trim()||null]); for(const item of b.items) { const [drug]:any=await conn.execute('SELECT id FROM drugs WHERE id=? AND is_active=1',[num(item.drug_id)]); if(!drug.length) throw new Error('A selected drug is no longer active.'); await conn.execute('INSERT INTO prescription_items(prescription_id,drug_id,quantity,dispensed_quantity,dosage,duration,instructions,created_at,updated_at) VALUES(?,?,?,0,?,?,?,NOW(),NOW())',[ins.insertId,num(item.drug_id),num(item.quantity),String(item.dosage||'').trim()||null,String(item.duration||'').trim()||null,String(item.instructions||'').trim()||null]); } await conn.commit(); return ok(await one('SELECT * FROM prescriptions WHERE id=?',[ins.insertId]),201); } catch(e:any){await conn.rollback();return fail(e.message,422)} finally{conn.release()}
+  }
+  if(root==='prescriptions'&&path[1]&&method==='PATCH'&&allowed(user,['hod','doctor'])) {
+    if(!Array.isArray(b.items)||!b.items.length) return fail('Add at least one prescription item.',422);
+    if(b.items.some((item:any)=>!Number.isInteger(Number(item.drug_id))||!Number.isInteger(Number(item.quantity))||Number(item.quantity)<1)) return fail('Each medicine needs a valid drug and a quantity of at least one.',422);
+    const conn=await db.getConnection();
+    try {
+      await conn.beginTransaction();
+      const [found]:any=await conn.execute('SELECT * FROM prescriptions WHERE id=? FOR UPDATE',[num(path[1])]);
+      const rx=found[0];
+      if(!rx) throw new Error('Prescription not found.');
+      if(user.role==='doctor'&&Number(rx.doctor_id)!==Number(user.id)) throw new Error('You can only edit prescriptions you created.');
+      if(rx.status!=='pending') throw new Error('Only pending prescriptions can be edited.');
+      if(!Number.isInteger(Number(b.patient_id))||!await one('SELECT id FROM patients WHERE id=?',[num(b.patient_id)])) throw new Error('Select a valid patient.');
+      for(const item of b.items){const [drug]:any=await conn.execute('SELECT id FROM drugs WHERE id=? AND is_active=1',[num(item.drug_id)]);if(!drug.length)throw new Error('A selected drug is no longer active.');}
+      await conn.execute('DELETE FROM prescription_items WHERE prescription_id=?',[rx.id]);
+      for(const item of b.items) await conn.execute('INSERT INTO prescription_items(prescription_id,drug_id,quantity,dispensed_quantity,dosage,duration,instructions,created_at,updated_at) VALUES(?,?,?,0,?,?,?,NOW(),NOW())',[rx.id,num(item.drug_id),num(item.quantity),String(item.dosage||'').trim()||null,String(item.duration||'').trim()||null,String(item.instructions||'').trim()||null]);
+      await conn.execute('UPDATE prescriptions SET patient_id=?,notes=?,updated_at=NOW() WHERE id=?',[num(b.patient_id),String(b.notes||'').trim()||null,rx.id]);
+      await conn.commit();
+      return ok(await one('SELECT * FROM prescriptions WHERE id=?',[rx.id]));
+    } catch(e:any) {await conn.rollback();return fail(e.message,422)} finally {conn.release()}
+  }
+  if(root==='prescriptions'&&path[1]&&method==='DELETE'&&allowed(user,['hod','doctor'])) {
+    const rx=await one<any>('SELECT id,doctor_id,status FROM prescriptions WHERE id=?',[num(path[1])]);
+    if(!rx)return fail('Prescription not found.',404);
+    if(user.role==='doctor'&&Number(rx.doctor_id)!==Number(user.id))return fail('You can only cancel prescriptions you created.',403);
+    if(rx.status!=='pending')return fail('Only pending prescriptions can be cancelled.',409);
+    await run('UPDATE prescriptions SET status="cancelled",updated_at=NOW() WHERE id=?',[rx.id]);
+    return new NextResponse(null,{status:204});
   }
   if (root==='sync' && path[1]==='sales' && method==='POST') return syncSale(b,user);
   if (root==='settings' && path[1]==='alerts' && method==='PUT' && user.role==='hod') { for(const [key,value] of [['low_stock_threshold',b.low_stock_threshold],['expiry_warning_days',b.expiry_warning_days]] as const) await run('INSERT INTO pharmacy_settings(`key`,`value`,updated_by,created_at,updated_at) VALUES(?,?,?,NOW(),NOW()) ON DUPLICATE KEY UPDATE `value`=VALUES(`value`),updated_by=VALUES(updated_by),updated_at=NOW()',[key,String(value),user.id]); return ok({low_stock_threshold:num(b.low_stock_threshold),expiry_warning_days:num(b.expiry_warning_days)}); }
@@ -197,6 +245,9 @@ async function write(path: string[], req: NextRequest, user: User) {
 
 async function syncSale(data: any, user: User) {
   if (!data.local_id || !data.invoice_no || !Array.isArray(data.items) || !data.items.length) return fail('Sale details are incomplete.',422);
+  const subtotal=Number(data.subtotal_naira), discount=Number(data.discount_naira), total=Number(data.total_naira);
+  const itemsTotal=data.items.reduce((sum:number,item:any)=>sum+Number(item.quantity)*Number(item.unit_price_naira),0);
+  if(![subtotal,discount,total,itemsTotal].every(Number.isFinite)||subtotal<0||discount<0||discount>subtotal||total!==subtotal-discount||itemsTotal!==subtotal||data.items.some((item:any)=>!Number.isInteger(Number(item.drug_id))||!Number.isInteger(Number(item.quantity))||Number(item.quantity)<1||Number(item.unit_price_naira)<0)) return fail('Sale totals or item quantities are invalid.',422);
   const conn=await db.getConnection();
   try {
     await conn.beginTransaction();
@@ -208,8 +259,8 @@ async function syncSale(data: any, user: User) {
     if(counts.length)throw new Error('Sales are paused for this pharmacy unit while a physical stock count is in progress.');
     let patientId=data.patient_id||null;
     if(!patientId&&data.folder_no){const [p]:any=await conn.execute('SELECT id FROM patients WHERE folder_no=?',[data.folder_no]);patientId=p[0]?.id||null}
-    let prescription=null;
-    if(data.prescription_id){const [rx]:any=await conn.execute('SELECT * FROM prescriptions WHERE id=? FOR UPDATE',[data.prescription_id]);prescription=rx[0];if(!prescription||prescription.patient_id!==patientId||!['pending','partially_dispensed'].includes(prescription.status))throw new Error('Prescription does not match this patient or is no longer available.')}
+    let prescription=null; let prescriptionLines:Map<number,any>|null=null;
+    if(data.prescription_id){const [rx]:any=await conn.execute('SELECT * FROM prescriptions WHERE id=? FOR UPDATE',[data.prescription_id]);prescription=rx[0];if(!prescription||Number(prescription.patient_id)!==Number(patientId)||!['pending','partially_dispensed'].includes(prescription.status))throw new Error('Prescription does not match this patient or is no longer available.');const [rxItems]:any=await conn.execute('SELECT * FROM prescription_items WHERE prescription_id=? FOR UPDATE',[prescription.id]);prescriptionLines=new Map(rxItems.map((line:any)=>[Number(line.drug_id),line]));const dispensed=new Map<number,number>();for(const item of data.items)dispensed.set(Number(item.drug_id),(dispensed.get(Number(item.drug_id))||0)+Number(item.quantity));for(const [drugId,quantity] of dispensed){const line=prescriptionLines.get(drugId);if(!line||quantity>Number(line.quantity)-Number(line.dispensed_quantity))throw new Error('Sale items exceed the remaining prescribed quantities.');}}
     const [sale]:any=await conn.execute('INSERT INTO sales(invoice_no,client_sale_id,prescription_id,patient_id,staff_id,department_id,subtotal_naira,discount_naira,total_naira,payment_mode,is_synced,sold_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,1,?,?,NOW())',[data.invoice_no,data.local_id,data.prescription_id||null,patientId,user.id,department,data.subtotal_naira,data.discount_naira,data.total_naira,data.payment_mode,data.created_at||new Date(),new Date()]);
     for(const item of data.items){const [stocks]:any=await conn.execute('SELECT * FROM stocks WHERE drug_id=? AND department_id=? AND quantity>0 AND expiry_date>=CURDATE() ORDER BY expiry_date FOR UPDATE',[item.drug_id,department]);const stock=stocks.find((s:any)=>s.quantity>=Number(item.quantity));if(!stock)throw new Error(`Insufficient stock for ${item.name||'medicine'}. Sale is held for HOD review.`);await conn.execute('UPDATE stocks SET quantity=quantity-? WHERE id=?',[item.quantity,stock.id]);await conn.execute('INSERT INTO sale_items(sale_id,drug_id,quantity,unit_price_naira,cost_price_naira,line_total_naira,created_at,updated_at) VALUES(?,?,?,?,?,?,NOW(),NOW())',[sale.insertId,item.drug_id,item.quantity,item.unit_price_naira,stock.cost_price_naira,Number(item.quantity)*Number(item.unit_price_naira)]);if(prescription)await conn.execute('UPDATE prescription_items SET dispensed_quantity=dispensed_quantity+? WHERE prescription_id=? AND drug_id=?',[item.quantity,prescription.id,item.drug_id]);}
     if(prescription){const [remaining]:any=await conn.execute('SELECT COUNT(*) count FROM prescription_items WHERE prescription_id=? AND dispensed_quantity<quantity',[prescription.id]);await conn.execute('UPDATE prescriptions SET status=?,updated_at=NOW() WHERE id=?',[remaining[0].count?'partially_dispensed':'dispensed',prescription.id])}
