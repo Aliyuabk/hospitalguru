@@ -178,7 +178,7 @@ async function write(path: string[], req: NextRequest, user: User) {
     if (path[1] && method==='DELETE' && user.role==='hod') { await run('UPDATE drugs SET is_active=0 WHERE id=?',[num(path[1])]); return new NextResponse(null,{status:204}); }
   }
   if (root === 'patients') {
-    if (method==='POST') { const r=await run('INSERT INTO patients(folder_no,full_name,phone,nhis_number,created_at,updated_at) VALUES(?,?,?,?,NOW(),NOW())',[b.folder_no,b.full_name,b.phone||null,b.nhis_number||null]); return ok(await one('SELECT * FROM patients WHERE id=?',[r.insertId]),201); }
+    if (method==='POST') { if(!allowed(user,['hod','pharmacy_staff']))return fail('This action is unauthorized.',403);const fullName=String(b.full_name||'').trim();const folderNo=String(b.folder_no||'').trim();if(!fullName||!folderNo)return fail('Patient name and hospital folder number are required.',422);const r=await run('INSERT INTO patients(folder_no,full_name,phone,nhis_number,created_at,updated_at) VALUES(?,?,?,?,NOW(),NOW())',[folderNo,fullName,String(b.phone||'').trim()||null,String(b.nhis_number||'').trim()||null]); return ok(await one('SELECT * FROM patients WHERE id=?',[r.insertId]),201); }
     if (path[1] && ['PATCH','PUT'].includes(method)) { const f=['folder_no','full_name','phone','nhis_number'].filter(k=>b[k]!==undefined); if(f.length) await run(`UPDATE patients SET ${f.map(k=>`${k}=?`).join(',')},updated_at=NOW() WHERE id=?`,[...f.map(k=>b[k]||null),num(path[1])]); return ok(await one('SELECT * FROM patients WHERE id=?',[num(path[1])])); }
     if (path[1] && method==='DELETE' && user.role==='hod') { await run('DELETE FROM patients WHERE id=?',[num(path[1])]); return new NextResponse(null,{status:204}); }
   }
