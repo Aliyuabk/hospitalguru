@@ -1,0 +1,108 @@
+-- MySQL schema for the Next.js API. Safe to run on an empty database.
+-- Existing Laravel installations can continue using the same tables and data.
+CREATE TABLE IF NOT EXISTS departments (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, code VARCHAR(255) NOT NULL UNIQUE,
+ type VARCHAR(32) NOT NULL, is_active TINYINT(1) NOT NULL DEFAULT 1, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS users (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL UNIQUE,
+ email_verified_at TIMESTAMP NULL, password VARCHAR(255) NOT NULL, role VARCHAR(32) NOT NULL, department_id BIGINT UNSIGNED NULL,
+ is_active TINYINT(1) NOT NULL DEFAULT 1, remember_token VARCHAR(100) NULL, profile_photo_path VARCHAR(255) NULL,
+ created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, CONSTRAINT users_department_fk FOREIGN KEY(department_id) REFERENCES departments(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS patients (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, folder_no VARCHAR(64) NOT NULL UNIQUE, full_name VARCHAR(255) NOT NULL,
+ phone VARCHAR(32) NULL, nhis_number VARCHAR(64) NULL, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL,
+ INDEX patients_name_idx(full_name), INDEX patients_phone_idx(phone), INDEX patients_nhis_idx(nhis_number)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS suppliers (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, phone VARCHAR(32) NULL, email VARCHAR(255) NULL,
+ address VARCHAR(500) NULL, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS drugs (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, barcode VARCHAR(100) NULL UNIQUE, sku VARCHAR(80) NOT NULL UNIQUE,
+ category VARCHAR(100) NULL, unit VARCHAR(50) NOT NULL DEFAULT 'Unit', is_active TINYINT(1) NOT NULL DEFAULT 1,
+ created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, INDEX drugs_name_idx(name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS stocks (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, drug_id BIGINT UNSIGNED NOT NULL, department_id BIGINT UNSIGNED NOT NULL,
+ batch_no VARCHAR(255) NOT NULL, quantity INT UNSIGNED NOT NULL DEFAULT 0, cost_price_naira BIGINT UNSIGNED NOT NULL,
+ selling_price_naira BIGINT UNSIGNED NOT NULL, expiry_date DATE NOT NULL, supplier_id BIGINT UNSIGNED NULL,
+ created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, INDEX stocks_lookup_idx(drug_id,department_id,expiry_date),
+ FOREIGN KEY(drug_id) REFERENCES drugs(id) ON DELETE CASCADE, FOREIGN KEY(department_id) REFERENCES departments(id) ON DELETE CASCADE,
+ FOREIGN KEY(supplier_id) REFERENCES suppliers(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS stock_transfers (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, transfer_no VARCHAR(255) NOT NULL UNIQUE, from_department_id BIGINT UNSIGNED NOT NULL,
+ to_department_id BIGINT UNSIGNED NOT NULL, drug_id BIGINT UNSIGNED NOT NULL, from_stock_id BIGINT UNSIGNED NULL, batch_no VARCHAR(255) NOT NULL,
+ quantity INT UNSIGNED NOT NULL, created_by BIGINT UNSIGNED NOT NULL, status VARCHAR(255) NOT NULL DEFAULT 'completed', transferred_at TIMESTAMP NOT NULL,
+ created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, FOREIGN KEY(from_department_id) REFERENCES departments(id), FOREIGN KEY(to_department_id) REFERENCES departments(id),
+ FOREIGN KEY(drug_id) REFERENCES drugs(id) ON DELETE CASCADE, FOREIGN KEY(from_stock_id) REFERENCES stocks(id) ON DELETE SET NULL, FOREIGN KEY(created_by) REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS prescriptions (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, prescription_no VARCHAR(255) NOT NULL UNIQUE, patient_id BIGINT UNSIGNED NOT NULL,
+ doctor_id BIGINT UNSIGNED NOT NULL, status VARCHAR(255) NOT NULL DEFAULT 'pending', notes TEXT NULL, prescribed_at TIMESTAMP NOT NULL,
+ created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, INDEX prescriptions_status_idx(status,prescribed_at),
+ FOREIGN KEY(patient_id) REFERENCES patients(id) ON DELETE RESTRICT, FOREIGN KEY(doctor_id) REFERENCES users(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS prescription_items (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, prescription_id BIGINT UNSIGNED NOT NULL, drug_id BIGINT UNSIGNED NOT NULL,
+ quantity INT UNSIGNED NOT NULL, dispensed_quantity INT UNSIGNED NOT NULL DEFAULT 0, dosage VARCHAR(255) NULL, duration VARCHAR(255) NULL,
+ instructions TEXT NULL, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, FOREIGN KEY(prescription_id) REFERENCES prescriptions(id) ON DELETE CASCADE,
+ FOREIGN KEY(drug_id) REFERENCES drugs(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS sales (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, invoice_no VARCHAR(255) NOT NULL UNIQUE, client_sale_id CHAR(36) NOT NULL UNIQUE,
+ patient_id BIGINT UNSIGNED NULL, prescription_id BIGINT UNSIGNED NULL, staff_id BIGINT UNSIGNED NOT NULL, department_id BIGINT UNSIGNED NOT NULL,
+ subtotal_naira BIGINT UNSIGNED NOT NULL, discount_naira BIGINT UNSIGNED NOT NULL DEFAULT 0, total_naira BIGINT UNSIGNED NOT NULL,
+ payment_mode VARCHAR(32) NOT NULL, is_synced TINYINT(1) NOT NULL DEFAULT 1, sold_at TIMESTAMP NOT NULL, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL,
+ INDEX sales_department_sold_idx(department_id,sold_at), FOREIGN KEY(patient_id) REFERENCES patients(id) ON DELETE SET NULL,
+ FOREIGN KEY(prescription_id) REFERENCES prescriptions(id) ON DELETE SET NULL, FOREIGN KEY(staff_id) REFERENCES users(id), FOREIGN KEY(department_id) REFERENCES departments(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS sale_items (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, sale_id BIGINT UNSIGNED NOT NULL, drug_id BIGINT UNSIGNED NOT NULL,
+ quantity INT UNSIGNED NOT NULL, unit_price_naira BIGINT UNSIGNED NOT NULL, cost_price_naira BIGINT UNSIGNED NOT NULL, line_total_naira BIGINT UNSIGNED NOT NULL,
+ created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, FOREIGN KEY(sale_id) REFERENCES sales(id) ON DELETE CASCADE, FOREIGN KEY(drug_id) REFERENCES drugs(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS pharmacy_settings (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `key` VARCHAR(255) NOT NULL UNIQUE, `value` VARCHAR(255) NOT NULL,
+ updated_by BIGINT UNSIGNED NULL, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, FOREIGN KEY(updated_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS sync_conflicts (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, client_sale_id CHAR(36) NOT NULL UNIQUE, invoice_no VARCHAR(255) NOT NULL,
+ staff_id BIGINT UNSIGNED NOT NULL, department_id BIGINT UNSIGNED NOT NULL, payload JSON NOT NULL, reason TEXT NOT NULL,
+ status VARCHAR(255) NOT NULL DEFAULT 'pending', reviewed_by BIGINT UNSIGNED NULL, review_note TEXT NULL, reviewed_at TIMESTAMP NULL,
+ created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, INDEX conflicts_status_idx(status,created_at), FOREIGN KEY(staff_id) REFERENCES users(id),
+ FOREIGN KEY(department_id) REFERENCES departments(id), FOREIGN KEY(reviewed_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS stock_counts (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, reference VARCHAR(255) NOT NULL UNIQUE, department_id BIGINT UNSIGNED NOT NULL,
+ status VARCHAR(255) NOT NULL DEFAULT 'counting', started_by BIGINT UNSIGNED NOT NULL, completed_by BIGINT UNSIGNED NULL,
+ started_at TIMESTAMP NOT NULL, completed_at TIMESTAMP NULL, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL,
+ INDEX stock_counts_dept_status_idx(department_id,status), FOREIGN KEY(department_id) REFERENCES departments(id) ON DELETE RESTRICT,
+ FOREIGN KEY(started_by) REFERENCES users(id) ON DELETE RESTRICT, FOREIGN KEY(completed_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS stock_count_items (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, stock_count_id BIGINT UNSIGNED NOT NULL, stock_id BIGINT UNSIGNED NULL,
+ drug_id BIGINT UNSIGNED NOT NULL, batch_no VARCHAR(255) NOT NULL, expected_quantity INT UNSIGNED NOT NULL, counted_quantity INT UNSIGNED NULL,
+ counted_by BIGINT UNSIGNED NULL, counted_at TIMESTAMP NULL, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL,
+ UNIQUE KEY count_stock_unique(stock_count_id,stock_id), FOREIGN KEY(stock_count_id) REFERENCES stock_counts(id) ON DELETE CASCADE,
+ FOREIGN KEY(stock_id) REFERENCES stocks(id) ON DELETE SET NULL, FOREIGN KEY(drug_id) REFERENCES drugs(id) ON DELETE RESTRICT,
+ FOREIGN KEY(counted_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS staff_messages (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, sender_id BIGINT UNSIGNED NOT NULL, recipient_id BIGINT UNSIGNED NOT NULL,
+ body TEXT NOT NULL, read_at TIMESTAMP NULL, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL,
+ INDEX messages_inbox_idx(recipient_id,sender_id,read_at), INDEX messages_pair_idx(sender_id,recipient_id,id),
+ FOREIGN KEY(sender_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY(recipient_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS personal_access_tokens (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, tokenable_type VARCHAR(255) NOT NULL, tokenable_id BIGINT UNSIGNED NOT NULL,
+ name VARCHAR(255) NOT NULL, token CHAR(64) NOT NULL UNIQUE, abilities TEXT NULL, last_used_at TIMESTAMP NULL, expires_at TIMESTAMP NULL,
+ created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, INDEX personal_access_tokens_owner_idx(tokenable_type,tokenable_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS audit_logs (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, user_id BIGINT UNSIGNED NULL, action VARCHAR(255) NOT NULL,
+ auditable_type VARCHAR(255) NULL, auditable_id BIGINT UNSIGNED NULL, metadata JSON NULL, ip_address VARCHAR(45) NULL,
+ created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -33,14 +33,14 @@ The client has confirmed the proposed first-release scope, with these clarificat
 | Low stock and expiry | HOD can configure low-stock and expiry warning thresholds. Inventory and dashboard views show matching alerts. Defaults are 20 units and 30 days. |
 | Offline sales | The POS saves completed sales in local PouchDB/IndexedDB and retries synchronization when online. A local sale UUID prevents duplicate server records. Unsynced sales reduce the cached stock display on that device. Stock conflicts are kept for HOD review. |
 | Patients and prescriptions | Patient folders are searchable and linked to sales. Doctors can create prescriptions with quantity, dosage, duration, and instructions; pharmacy staff can open a prescription in POS. |
-| Staff access | Sanctum authentication and role-based access are provided for HOD, store keeper, pharmacy staff, medical director, and doctor. The seed creates four pharmacy staff accounts across the two dispensing departments. |
+| Staff access | MySQL-backed bearer-token authentication and server-side role checks support HOD, store keeper, pharmacy staff, medical director, and doctor. Existing staff records and bcrypt passwords can be reused. |
 | Staff chat | Authenticated active accounts can send text messages to one another. Conversations refresh every 2.5 seconds while open, show sent/read indicators and unread counts, and can play a short sent/received tone when sound is enabled. Attachments are not supported. |
 | Reports | Daily, weekly, and monthly sales summaries include department, staff, and payment-mode views. Sales data can be exported as CSV. |
 | App identity | `frontend/public/icon.svg` is used as the PWA/browser icon and as the visible logo on the sign-in screen and app navigation. |
 
 ### Offline limitations
 
-Offline support currently centers on the POS. A previously signed-in user can use the locally cached catalogue, save sales, print receipts, and let the queue retry later. Other workflows, including inventory receiving, transfers, prescription creation, staff management, and reports, require the Laravel API. Local stock figures are device-local estimates until the server accepts a sale; the server remains the shared stock authority and can flag conflicts when multiple devices sell the same remaining stock while disconnected.
+Offline support currently centers on the POS. A previously signed-in user can use the locally cached catalogue, save sales, print receipts, and let the queue retry later. Other workflows, including inventory receiving, transfers, prescription creation, staff management, and reports, require the Next.js server. Local stock figures are device-local estimates until the server accepts a sale; the server remains the shared stock authority and can flag conflicts when multiple devices sell the same remaining stock while disconnected.
 
 ## Planned features
 
@@ -83,43 +83,41 @@ These items are in the product specification but are not complete in the current
 ## Architecture
 
 - `frontend/` — Next.js 14, React, TypeScript, Tailwind CSS, PWA support, role-based screens, POS, and the local offline sales queue.
-- `backend/` — Laravel 12 API, Sanctum bearer-token authentication, role middleware, database migrations, and API controllers.
+- `frontend/app/api/` — Next.js server API, MySQL data access, bearer-token authentication, and role enforcement.
+- `frontend/database/schema.mysql.sql` — MySQL schema for fresh installations; existing Laravel-managed databases can be reused.
 - `electron/` — context-isolated Electron shell for the Windows desktop build.
 - Database — MySQL 8 for shared use; SQLite can be configured for local API development.
 
-The Electron desktop app packages the frontend. The Laravel API and its database remain separate services and must be hosted somewhere the desktop clients can reach. Installing the desktop app does not install or start a shared hospital API/database server.
+The Electron desktop app packages the frontend. Next.js serves the API and connects to MySQL on the server. MySQL credentials are server-only and must never use `NEXT_PUBLIC_` environment variables.
 
 ## Run locally
 
-Requirements: Node.js 20+, PHP 8.2+, Composer, and MySQL 8 (or SQLite for local API development).
+Requirements: Node.js 20+ and MySQL 8.
 
-### 1. Start the API
+### 1. Configure MySQL
 
-In `backend/`, copy `.env.example` to `.env`, configure the database, and set a unique `BKD_SEED_PASSWORD` of at least 12 characters. Then run:
+Create a database and apply `frontend/database/schema.mysql.sql` for a fresh installation. To continue using an existing installation, point Next.js at the same MySQL database; do not drop or recreate its tables. The schema includes authentication tokens, staff chat, stock counts, and all pharmacy tables.
 
-```powershell
-composer install
-php artisan key:generate
-php artisan migrate --seed
-composer run dev
-```
-
-The API runs at `http://localhost:8000` by default. Seeding creates starter departments, sample catalogue/stock/patients, and accounts for HOD, store keeper, four pharmacy staff, medical director, and doctor. All seeded accounts use the configured `BKD_SEED_PASSWORD`. The email addresses are listed under [Sign-in accounts](#sign-in-accounts).
-
-### 2. Start the frontend
-
-In `frontend/`, create `.env.local`. Leave the API URL empty so the frontend uses the same computer name or IP as the browser, on port 8000:
+Create `frontend/.env.local` with server-side database settings (see `frontend/.env.example`):
 
 ```env
-NEXT_PUBLIC_API_URL=
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=bkd_pharmacy
+DB_USERNAME=root
+DB_PASSWORD=your_database_password
 ```
 
+Use an existing staff account from the database. Fresh installations need an administrator account inserted with a bcrypt password hash before first sign-in; do not use sample or shared production credentials.
+
+### 2. Start Next.js
+
 ```powershell
-npm install
+npm ci
 npm run dev
 ```
 
-Open `http://localhost:3000` on the server. The `npm run dev` output prints the LAN URL for other devices, such as `http://10.22.32.251:3000`. Keep the frontend and backend running and allow TCP ports 3000 and 8000 through Windows Firewall. After sign-in, the POS can save transactions locally while disconnected and sync them later.
+Open `http://localhost:3000`. The development server also prints a LAN URL for other devices. Only Next.js needs to be reachable by clients; it connects to MySQL server-side. After sign-in, POS sales can be queued locally while disconnected and synced when online.
 
 ### Public domain deployment
 
@@ -139,23 +137,15 @@ If PowerShell blocks the `npm.ps1` script, use:
 npm.cmd run dist:win
 ```
 
-The NSIS installer is written to `frontend/dist/`. The Electron app automatically discovers the BKD API on the local subnet; leave `NEXT_PUBLIC_API_URL` empty. The updated API and database must run separately on the hospital server with port 8000 reachable. For desktop development, start the frontend with `npm run dev`, then run `npm run desktop` from `frontend/`.
+The NSIS installer is written to `frontend/dist/`. The desktop app requires the Next.js server and MySQL database to be reachable on the hospital network. For desktop development, start Next.js with `npm run dev`, then run `npm run desktop` from `frontend/`.
 
 ## Sign-in accounts
 
-Seeded emails (all use the password configured as `BKD_SEED_PASSWORD` before seeding):
-
-- HOD: `hod@bkd.local`
-- Store keeper: `store@bkd.local`
-- Pharmacy staff: `amina@bkd.local`, `john@bkd.local`, `maryam@bkd.local`, `david@bkd.local`
-- Medical director: `md@bkd.local`
-- Doctor: `doctor@bkd.local`
-
-Use unique credentials outside a local demonstration setup. Keep the API reachable during initial sign-in; an existing signed-in session is saved on that device for POS use.
+The application reads staff accounts from MySQL. Existing databases retain their current accounts. On a fresh installation, create the first HOD account with `npm.cmd run create-admin` from `frontend/`; the script prompts for a unique email and password without echoing the password.
 
 ## Roles and access control
 
-The API enforces role permissions on every protected endpoint. Hiding a screen in the frontend is not treated as an authorization check.
+The Next.js API enforces role permissions on protected endpoints. Hiding a screen in the frontend is not treated as an authorization check.
 
 | Role | Access |
 | --- | --- |
@@ -168,7 +158,7 @@ The API enforces role permissions on every protected endpoint. Hiding a screen i
 Cashier and auditor are future roles, not current seeded roles.
 ## API overview
 
-All API routes are under `/api`. Login is `POST /api/auth/login` with `email` and `password`; protected routes use the Sanctum bearer token returned by login. `GET /api/me` returns the authenticated account. Common endpoints include:
+All API routes are under `/api`. Login is `POST /api/auth/login` with `email` and `password`; protected routes use the bearer token returned by login, stored as a hash in MySQL. `GET /api/me` returns the authenticated account. Common endpoints include:
 
 - `GET /api/dashboard` and `GET /api/reports` — overview and sales reports.
 - `GET /api/drugs`, `GET /api/inventory`, and `GET /api/inventory/summary` — catalogue and stock.
@@ -193,6 +183,4 @@ Remaining decisions before production deployment:
 
 ## Security and deployment notes
 
-For a live deployment, use HTTPS, set a strong application key and unique staff passwords, configure database credentials and backups, restrict API access to trusted networks, and run the API and frontend under supervised production services. Do not use demo seed credentials for live accounts. The app is pharmacy workflow software; confirm hospital policies and applicable record-keeping requirements before using it for controlled medicines, insurance claims, or regulated reporting.
-npm.cmd run dev
-composer run dev
+For a live deployment, use HTTPS, unique staff passwords, server-only database credentials and backups, restrict access to trusted networks, and run the Next.js service under a supervised production process. Do not use demo seed credentials for live accounts. The app is pharmacy workflow software; confirm hospital policies and applicable record-keeping requirements before using it for controlled medicines, insurance claims, or regulated reporting.

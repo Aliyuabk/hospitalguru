@@ -15,7 +15,7 @@ console.log('This computer: http://localhost:3000');
 if (addresses.length) {
   console.log('Other devices on the same network:');
   for (const entry of addresses) console.log(`  http://${entry.address}:3000 (${entry.name})`);
-  console.log('The frontend connects to the API on this computer at port 8000.');
+  console.log('The frontend API is served by this Next.js process; it connects to MySQL using DB_* settings.');
 } else {
   console.log('No LAN IPv4 address detected. Check the server network connection.');
 }

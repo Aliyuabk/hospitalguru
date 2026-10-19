@@ -3,8 +3,71 @@
   "version": "1.0.0",
   "private": true,
   "main": "electron/main.js",
-  "scripts": { "dev": "node scripts/dev-lan.mjs", "build": "next build", "start": "next start -H 0.0.0.0", "desktop": "electron ../electron/main.js", "dist:win": "next build && electron-builder --win nsis" },
-  "dependencies": { "@radix-ui/react-dialog": "^1.1.6", "@radix-ui/react-slot": "^1.1.2", "clsx": "^2.1.1", "lucide-react": "^0.468.0", "next": "14.2.24", "pouchdb-browser": "^9.0.0", "react": "^18.3.1", "react-dom": "^18.3.1", "tailwind-merge": "^2.6.0" },
-  "devDependencies": { "@types/node": "^22.10.5", "@types/react": "^18.3.18", "@types/react-dom": "^18.3.5", "autoprefixer": "^10.4.20", "electron": "^33.2.1", "electron-builder": "^25.1.8", "postcss": "^8.4.49", "tailwindcss": "^3.4.17", "typescript": "^5.7.3" },
-  "build": { "appId": "ng.gov.bkd.hospital.pharmacy", "productName": "General Hospital BKD Pharmacy", "directories": { "output": "dist" }, "files": ["electron/**/*", "package.json"], "extraResources": [{ "from": ".next/standalone", "to": "app" }, { "from": ".next/static", "to": "app/.next/static" }, { "from": "public", "to": "app/public" }], "win": { "target": ["nsis"] }, "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true } }
+  "scripts": {
+    "dev": "node scripts/dev-lan.mjs",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0",
+    "create-admin": "node scripts/create-admin.mjs",
+    "desktop": "electron ../electron/main.js",
+    "dist:win": "next build && electron-builder --win nsis"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-slot": "^1.1.2",
+    "bcryptjs": "^3.0.3",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.468.0",
+    "mysql2": "^3.24.6",
+    "next": "14.2.24",
+    "pouchdb-browser": "^9.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "autoprefixer": "^10.4.20",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  },
+  "build": {
+    "appId": "ng.gov.bkd.hospital.pharmacy",
+    "productName": "General Hospital BKD Pharmacy",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": ".next/standalone",
+        "to": "app"
+      },
+      {
+        "from": ".next/static",
+        "to": "app/.next/static"
+      },
+      {
+        "from": "public",
+        "to": "app/public"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  }
 }

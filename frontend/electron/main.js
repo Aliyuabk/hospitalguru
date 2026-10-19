@@ -1,13 +1,10 @@
-const { app, BrowserWindow, shell, ipcMain } = require('electron');
+const { app, BrowserWindow, shell } = require('electron');
 const path = require('node:path');
 const net = require('node:net');
 const { spawn } = require('node:child_process');
-const { discoverApi } = require('./discovery.cjs');
 const isDev = !app.isPackaged;
 let windowRef;
 let server;
-ipcMain.handle('bkd:discover-api', () => discoverApi());
-
 function waitForFrontend() {
   return new Promise((resolve, reject) => {
     const started = Date.now();

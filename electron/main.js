@@ -1,12 +1,9 @@
-const { app, BrowserWindow, shell, ipcMain } = require('electron');
+const { app, BrowserWindow, shell } = require('electron');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
-const { discoverApi } = require('../frontend/electron/discovery.cjs');
 const isDev = !app.isPackaged;
 let windowRef;
 let server;
-ipcMain.handle('bkd:discover-api', () => discoverApi());
-
 function createWindow() {
   windowRef = new BrowserWindow({
     width: 1440, height: 940, minWidth: 1024, minHeight: 720,
