@@ -43,7 +43,7 @@ const connection = await pool.getConnection();
 try {
   await connection.beginTransaction();
   for (const [name, code, type] of [['Central Store','central-store','central_store'],['Central Pharmacy','central-pharmacy','central_pharmacy'],['Department 2','dept-2','dept_2']]) {
-    await connection.execute('INSERT INTO departments(name,code,type,is_active,created_at,updated_at) VALUES(?,?,?,1,NOW(),NOW()) ON DUPLICATE KEY UPDATE name=VALUES(name),type=VALUES(type),is_active=1,updated_at=NOW()', [name,code,type]);
+    await connection.execute('INSERT IGNORE INTO departments(name,code,type,is_active,created_at,updated_at) VALUES(?,?,?,1,NOW(),NOW())', [name,code,type]);
   }
   const [existing] = await connection.execute('SELECT id FROM users WHERE email=? LIMIT 1', [email]);
   if (existing.length) throw new Error('That email already exists. No account was changed.');

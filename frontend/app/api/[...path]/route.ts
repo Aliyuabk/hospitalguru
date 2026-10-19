@@ -166,10 +166,12 @@ async function write(path: string[], req: NextRequest, user: User) {
   }
   if (root === 'inventory' && path[1] === 'stock' && method==='POST') {
     if(!allowed(user,['hod','store_keeper'])) return fail('This action is unauthorized.',403);
+    if(await one("SELECT id FROM stock_counts WHERE department_id=? AND status='counting' LIMIT 1",[num(b.department_id)])) return fail('Stock receiving is paused while this pharmacy unit is being physically counted.',423);
     const r=await run('INSERT INTO stocks(drug_id,department_id,batch_no,quantity,cost_price_naira,selling_price_naira,expiry_date,supplier_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,NOW(),NOW())',[b.drug_id,b.department_id,b.batch_no,b.quantity,b.cost_price_naira,b.selling_price_naira,b.expiry_date,b.supplier_id||null]); return ok(await one('SELECT * FROM stocks WHERE id=?',[r.insertId]),201);
   }
   if (root==='inventory' && path[1]==='transfers' && method==='POST') {
     if(!allowed(user,['hod','store_keeper'])) return fail('This action is unauthorized.',403);
+    if(await one("SELECT id FROM stock_counts WHERE department_id IN (?,?) AND status='counting' LIMIT 1",[num(b.from_department_id),num(b.to_department_id)])) return fail('Stock transfers are paused while a pharmacy unit is being physically counted.',423);
     const conn=await db.getConnection(); try { await conn.beginTransaction(); const [srows]:any=await conn.execute('SELECT * FROM stocks WHERE id=? FOR UPDATE',[b.stock_id]); const s=srows[0]; if(!s||s.quantity<num(b.quantity)) throw new Error('Source batch does not have enough stock.'); await conn.execute('UPDATE stocks SET quantity=quantity-? WHERE id=?',[b.quantity,s.id]); const [existing]:any=await conn.execute('SELECT id FROM stocks WHERE drug_id=? AND department_id=? AND batch_no=? FOR UPDATE',[s.drug_id,b.to_department_id,s.batch_no]); let target=existing[0]; if(target) await conn.execute('UPDATE stocks SET quantity=quantity+? WHERE id=?',[b.quantity,target.id]); else { const [ins]:any=await conn.execute('INSERT INTO stocks(drug_id,department_id,batch_no,quantity,cost_price_naira,selling_price_naira,expiry_date,supplier_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,NOW(),NOW())',[s.drug_id,b.to_department_id,s.batch_no,b.quantity,s.cost_price_naira,s.selling_price_naira,s.expiry_date,s.supplier_id]); target={id:ins.insertId}; } const no=`TRF-${Date.now()}`; const [tr]:any=await conn.execute('INSERT INTO stock_transfers(transfer_no,from_department_id,to_department_id,drug_id,from_stock_id,batch_no,quantity,created_by,status,transferred_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,NOW(),NOW())',[no,s.department_id,b.to_department_id,s.drug_id,s.id,s.batch_no,b.quantity,user.id,'completed',new Date()]); await conn.commit(); return ok(await one('SELECT * FROM stock_transfers WHERE id=?',[tr.insertId]),201); } catch(e:any){await conn.rollback();return fail(e.message||'Transfer failed.',422)} finally{conn.release()}
   }
   if (root==='prescriptions' && method==='POST' && allowed(user,['hod','doctor'])) {
@@ -201,6 +203,7 @@ async function syncSale(data: any, user: User) {
     const [existing]:any=await conn.execute('SELECT * FROM sales WHERE client_sale_id=?',[data.local_id]);
     if(existing.length){await conn.commit();return ok({sale:existing[0],is_synced:true,local_id:data.local_id})}
     const department=user.department_id||2;
+    await conn.execute('SELECT id FROM departments WHERE id=? FOR UPDATE',[department]);
     const [counts]:any=await conn.execute('SELECT id FROM stock_counts WHERE department_id=? AND status="counting"',[department]);
     if(counts.length)throw new Error('Sales are paused for this pharmacy unit while a physical stock count is in progress.');
     let patientId=data.patient_id||null;
@@ -225,10 +228,12 @@ async function dispatch(req: NextRequest, params: { path: string[] }) {
       ['drugs',['hod','store_keeper','pharmacy_staff','md','doctor']],['patients',['hod','pharmacy_staff','doctor']],
       ['prescriptions',['hod','doctor','pharmacy_staff']],['inventory',['hod','store_keeper','pharmacy_staff','md']],
       ['stock-counts',['hod','store_keeper','pharmacy_staff']],['suppliers',['hod','store_keeper']],['departments',['hod','store_keeper','pharmacy_staff','md']],
-      ['users',['hod']],['settings',['hod']],['sync',['hod']],
+      ['users',['hod']],['settings',['hod']],
     ];
     const rule=roleRules.find(([root])=>root===path[0]);
     if(rule&&!allowed(auth.user,rule[1]))return fail('This action is unauthorized.',403);
+    if(path[0]==='sync'&&path[1]==='sales'&&!allowed(auth.user,['hod','pharmacy_staff']))return fail('This action is unauthorized.',403);
+    if(path[0]==='sync'&&path[1]==='conflicts'&&!allowed(auth.user,['hod']))return fail('This action is unauthorized.',403);
     if(path[0]==='inventory'&&path[1]==='transfers'&&!allowed(auth.user,['hod','store_keeper']))return fail('This action is unauthorized.',403);
     if(path[0]==='prescriptions'&&method!=='GET'&&!allowed(auth.user,['hod','doctor']))return fail('This action is unauthorized.',403);
     if(method==='GET')return await read(path,req,auth.user);
