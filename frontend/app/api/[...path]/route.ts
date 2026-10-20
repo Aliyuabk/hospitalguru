@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'node:crypto';
+import { mkdir, unlink, writeFile } from 'node:fs/promises';
+import nodePath from 'node:path';
 import { db, one, rows, run } from '@/lib/mysql';
 import { allowed, currentUser, login, logout, type User } from '@/lib/server-auth';
 
@@ -10,13 +13,13 @@ const body = async (req: NextRequest) => {
   if (req.headers.get('content-type')?.includes('application/json')) return req.json().catch(() => ({}));
   if (req.headers.get('content-type')?.includes('multipart/form-data')) {
     const form = await req.formData().catch(() => null); const value: Record<string, unknown> = {};
-    form?.forEach((entry, key) => { if (typeof entry === 'string') value[key] = entry; });
+    form?.forEach((entry, key) => { value[key] = entry; });
     return value;
   }
   return {};
 };
 const num = (v: unknown, fallback = 0) => Number.isFinite(Number(v)) ? Number(v) : fallback;
-const clean = (u: User) => ({ id: u.id, name: u.name, email: u.email, role: u.role, department_id: u.department_id, is_active: Boolean(u.is_active) });
+const clean = (u: User) => ({ id: u.id, name: u.name, email: u.email, role: u.role, department_id: u.department_id, is_active: Boolean(u.is_active), profile_photo_url: (u as any).profile_photo_url || null });
 const page = (data: any[], total: number, perPage: number, current = 1) => ({ data, current_page: current, per_page: perPage, total, last_page: Math.max(1, Math.ceil(total / perPage)) });
 const staffRoles = ['hod', 'store_keeper', 'pharmacy_staff'];
 
@@ -40,6 +43,7 @@ async function read(path: string[], req: NextRequest, user: User) {
       const drug = await one('SELECT * FROM drugs WHERE id=? AND is_active=1', [num(path[1])]);
       if (!drug) return fail('Drug not found.', 404);
       (drug as any).stocks = await getRows(`SELECT s.*,dpt.name AS department_name FROM stocks s LEFT JOIN departments dpt ON dpt.id=s.department_id WHERE s.drug_id=? AND s.quantity>0 AND s.expiry_date>=CURDATE() ${dep ? 'AND s.department_id=?' : ''} ORDER BY s.expiry_date`, dep ? [num(path[1]), dep] : [num(path[1])]);
+      (drug as any).sale_units = await getRows('SELECT id,unit_name,units_per_unit,selling_price_naira FROM drug_units WHERE drug_id=? ORDER BY units_per_unit', [num(path[1])]);
       return ok(drug);
     }
     const params: any[] = [];
@@ -47,6 +51,7 @@ async function read(path: string[], req: NextRequest, user: User) {
     if (q.get('q')) { where.push('(d.name LIKE ? OR d.sku LIKE ? OR d.barcode LIKE ?)'); params.push(...Array(3).fill(`%${q.get('q')}%`)); }
     const drugs = await getRows(`SELECT d.* FROM drugs d WHERE ${where.join(' AND ')} ORDER BY d.name LIMIT 100`, params);
     for (const drug of drugs as any[]) drug.stocks = await getRows(`SELECT s.*,dpt.name AS department_name FROM stocks s LEFT JOIN departments dpt ON dpt.id=s.department_id WHERE s.drug_id=? AND s.quantity>0 AND s.expiry_date>=CURDATE() ${dep ? 'AND s.department_id=?' : ''} ORDER BY s.expiry_date`, dep ? [drug.id, dep] : [drug.id]);
+    for (const drug of drugs as any[]) drug.sale_units = await getRows('SELECT id,unit_name,units_per_unit,selling_price_naira FROM drug_units WHERE drug_id=? ORDER BY units_per_unit', [drug.id]);
     return ok(page(drugs as any[], (drugs as any[]).length, 100));
   }
   if (root === 'patients') {
@@ -58,26 +63,32 @@ async function read(path: string[], req: NextRequest, user: User) {
   }
   if (root === 'inventory') {
     if (path[1] === 'summary') {
-      const [settingRows, aggregate, departments] = await Promise.all([
+      const [settingRows, departments] = await Promise.all([
         getRows('SELECT `key`,`value` FROM pharmacy_settings WHERE `key` IN (?,?)', ['low_stock_threshold','expiry_warning_days']),
-        one('SELECT COALESCE(SUM(quantity*cost_price_naira),0) stock_value_naira, SUM(quantity < 20) low_stock_count, SUM(expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(),INTERVAL 30 DAY)) expiring_count FROM stocks' + (user.role === 'pharmacy_staff' ? ' WHERE department_id=?' : ''), user.role === 'pharmacy_staff' ? [user.department_id || 0] : []),
         one('SELECT COUNT(*) count FROM departments WHERE is_active=1'),
       ]);
       const settings = Object.fromEntries((settingRows as any[]).map(x => [x.key, Number(x.value)]));
-      return ok({ ...aggregate, low_stock_threshold: settings.low_stock_threshold || 20, expiry_warning_days: settings.expiry_warning_days || 30, departments: (departments as any)?.count || 0 });
+      const lowStockThreshold = settings.low_stock_threshold || 20;
+      const expiryWarningDays = settings.expiry_warning_days || 30;
+      const aggregate = await one('SELECT COALESCE(SUM(quantity*cost_price_naira),0) stock_value_naira, COALESCE(SUM(quantity < ?) ,0) low_stock_count, COALESCE(SUM(expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(),INTERVAL ? DAY)),0) expiring_count FROM stocks' + (user.role === 'pharmacy_staff' ? ' WHERE department_id=?' : ''), user.role === 'pharmacy_staff' ? [lowStockThreshold, expiryWarningDays, user.department_id || 0] : [lowStockThreshold, expiryWarningDays]);
+      return ok({ ...aggregate, low_stock_threshold: lowStockThreshold, expiry_warning_days: expiryWarningDays, departments: (departments as any)?.count || 0 });
     }
     if (path[1] === 'transfers') return ok(page(await getRows(`SELECT t.*,JSON_OBJECT('id',d.id,'name',d.name) drug,JSON_OBJECT('id',fd.id,'name',fd.name) from_department,JSON_OBJECT('id',td.id,'name',td.name) to_department,JSON_OBJECT('id',u.id,'name',u.name) creator FROM stock_transfers t JOIN drugs d ON d.id=t.drug_id JOIN departments fd ON fd.id=t.from_department_id JOIN departments td ON td.id=t.to_department_id JOIN users u ON u.id=t.created_by ORDER BY t.transferred_at DESC LIMIT 50`), 50, 50));
     const dep = user.role === 'pharmacy_staff' ? user.department_id : num(q.get('department_id')) || null;
     const inventory = await getRows(`SELECT s.*,JSON_OBJECT('id',d.id,'name',d.name,'sku',d.sku,'unit',d.unit) drug,JSON_OBJECT('id',p.id,'name',p.name) department,JSON_OBJECT('id',sp.id,'name',sp.name) supplier FROM stocks s JOIN drugs d ON d.id=s.drug_id JOIN departments p ON p.id=s.department_id LEFT JOIN suppliers sp ON sp.id=s.supplier_id WHERE s.quantity>0 ${dep ? 'AND s.department_id=?' : ''} ORDER BY s.expiry_date LIMIT 200`, dep ? [dep] : []);
-    return ok(page(inventory as any[], (inventory as any[]).length, 50));
+    return ok(page(inventory as any[], (inventory as any[]).length, 200));
   }
   if (root === 'suppliers') {
     const s = q.get('q'); return ok(page(await getRows(`SELECT * FROM suppliers ${s ? 'WHERE name LIKE ?' : ''} ORDER BY name LIMIT 50`, s ? [`%${s}%`] : []), 50, 50));
   }
   if (root === 'sales') {
-    const sales = await getRows(`SELECT s.*,JSON_OBJECT('full_name',p.full_name,'folder_no',p.folder_no) patient FROM sales s LEFT JOIN patients p ON p.id=s.patient_id WHERE 1=1 ${user.role === 'pharmacy_staff' ? 'AND s.staff_id=?' : ''} ORDER BY s.sold_at DESC LIMIT 30`, user.role === 'pharmacy_staff' ? [user.id] : []);
+    const sales = await getRows(`SELECT s.*,JSON_OBJECT('full_name',COALESCE(p.full_name,s.client_name),'folder_no',p.folder_no) patient FROM sales s LEFT JOIN patients p ON p.id=s.patient_id WHERE 1=1 ${user.role === 'pharmacy_staff' ? 'AND s.staff_id=?' : ''} ORDER BY s.sold_at DESC LIMIT 30`, user.role === 'pharmacy_staff' ? [user.id] : []);
     for (const sale of sales as any[]) sale.items = await getRows('SELECT si.*,JSON_OBJECT("id",d.id,"name",d.name) drug FROM sale_items si JOIN drugs d ON d.id=si.drug_id WHERE si.sale_id=?', [sale.id]);
     return ok(page(sales as any[], (sales as any[]).length, 30));
+  }
+  if (root === 'refund-requests') {
+    const sql = `SELECT r.*,s.invoice_no,s.total_naira,s.client_name,JSON_OBJECT('full_name',COALESCE(p.full_name,s.client_name),'folder_no',p.folder_no) patient,JSON_OBJECT('name',u.name) requester FROM refund_requests r JOIN sales s ON s.id=r.sale_id LEFT JOIN patients p ON p.id=s.patient_id JOIN users u ON u.id=r.requested_by ${user.role === 'hod' ? '' : 'WHERE r.requested_by=?'} ORDER BY r.requested_at DESC LIMIT 100`;
+    return ok(await getRows(sql, user.role === 'hod' ? [] : [user.id]));
   }
   if (root === 'prescriptions') {
     if (path[1]) {
@@ -108,7 +119,7 @@ async function read(path: string[], req: NextRequest, user: User) {
       one('SELECT COALESCE(SUM(quantity*cost_price_naira),0) value FROM stocks'),
       one('SELECT COUNT(*) count FROM departments WHERE is_active=1'),
       getRows(`SELECT DATE(sold_at) date,SUM(total_naira) total_naira FROM sales WHERE sold_at>=DATE_FORMAT(CURDATE(),'%Y-%m-01')${scope} GROUP BY DATE(sold_at) ORDER BY date`, args),
-      getRows("SELECT s.*,JSON_OBJECT('full_name',p.full_name,'folder_no',p.folder_no) patient,JSON_OBJECT('name',d.name) department,JSON_OBJECT('name',u.name) staff FROM sales s LEFT JOIN patients p ON p.id=s.patient_id JOIN departments d ON d.id=s.department_id JOIN users u ON u.id=s.staff_id ORDER BY s.sold_at DESC LIMIT 8"),
+      getRows("SELECT s.*,JSON_OBJECT('full_name',COALESCE(p.full_name,s.client_name),'folder_no',p.folder_no) patient,JSON_OBJECT('name',d.name) department,JSON_OBJECT('name',u.name) staff FROM sales s LEFT JOIN patients p ON p.id=s.patient_id JOIN departments d ON d.id=s.department_id JOIN users u ON u.id=s.staff_id ORDER BY s.sold_at DESC LIMIT 8"),
       getRows(`SELECT d.id department_id,d.name department,SUM(s.total_naira) total_naira FROM sales s JOIN departments d ON d.id=s.department_id WHERE s.sold_at>=DATE_FORMAT(CURDATE(),'%Y-%m-01')${scope} GROUP BY d.id,d.name ORDER BY total_naira DESC`, args),
       getRows(`SELECT u.id staff_id,u.name staff,SUM(s.total_naira) total_naira,COUNT(*) transactions FROM sales s JOIN users u ON u.id=s.staff_id WHERE s.sold_at>=DATE_FORMAT(CURDATE(),'%Y-%m-01')${scope} GROUP BY u.id,u.name ORDER BY total_naira DESC LIMIT 10`, args),
     ]);
@@ -142,29 +153,73 @@ async function read(path: string[], req: NextRequest, user: User) {
     const users = await getRows('SELECT u.id,u.name,u.email,u.role,u.department_id,u.is_active,u.created_at,JSON_OBJECT("id",d.id,"name",d.name) department FROM users u LEFT JOIN departments d ON d.id=u.department_id ORDER BY u.name LIMIT ? OFFSET ?', [perPage, (current - 1) * perPage]);
     return ok(page(users as any[], total, perPage, current));
   }
-  if (root === 'chat' && path[1] === 'contacts') return ok(await getRows("SELECT u.id,u.name,u.role,u.department_id,d.name department,(SELECT body FROM staff_messages m WHERE (m.sender_id=u.id AND m.recipient_id=?) OR (m.sender_id=? AND m.recipient_id=u.id) ORDER BY m.id DESC LIMIT 1) last_message,(SELECT created_at FROM staff_messages m WHERE (m.sender_id=u.id AND m.recipient_id=?) OR (m.sender_id=? AND m.recipient_id=u.id) ORDER BY m.id DESC LIMIT 1) last_message_at,(SELECT COUNT(*) FROM staff_messages m WHERE m.sender_id=u.id AND m.recipient_id=? AND m.read_at IS NULL) unread_count FROM users u LEFT JOIN departments d ON d.id=u.department_id WHERE u.is_active=1 AND u.id<>? ORDER BY last_message_at DESC,u.name",[user.id,user.id,user.id,user.id,user.id,user.id]));
+  if (root === 'chat' && path[1] === 'contacts') return ok(await getRows("SELECT u.id,u.name,u.role,u.department_id,CASE WHEN u.profile_photo_path IS NULL OR u.profile_photo_path='' THEN NULL ELSE CONCAT('/',u.profile_photo_path) END profile_photo_url,d.name department,(SELECT body FROM staff_messages m WHERE (m.sender_id=u.id AND m.recipient_id=?) OR (m.sender_id=? AND m.recipient_id=u.id) ORDER BY m.id DESC LIMIT 1) last_message,(SELECT created_at FROM staff_messages m WHERE (m.sender_id=u.id AND m.recipient_id=?) OR (m.sender_id=? AND m.recipient_id=u.id) ORDER BY m.id DESC LIMIT 1) last_message_at,(SELECT COUNT(*) FROM staff_messages m WHERE m.sender_id=u.id AND m.recipient_id=? AND m.read_at IS NULL) unread_count FROM users u LEFT JOIN departments d ON d.id=u.department_id WHERE u.is_active=1 AND u.id<>? ORDER BY last_message_at DESC,u.name",[user.id,user.id,user.id,user.id,user.id,user.id]));
   if (root === 'chat' && path[1] && path[2] === 'messages') {const contact=num(path[1]);const messages=await getRows('SELECT * FROM staff_messages WHERE (sender_id=? AND recipient_id=?) OR (sender_id=? AND recipient_id=?) ORDER BY id ASC LIMIT 100',[user.id,contact,contact,user.id]);await run('UPDATE staff_messages SET read_at=NOW() WHERE sender_id=? AND recipient_id=? AND read_at IS NULL',[contact,user.id]);return ok(messages)}
   return fail('Endpoint not found.',404);
+}
+
+async function saveDrugUnits(drugId:number, units:any[]) {
+  const cleanUnits=units.filter((u:any)=>String(u.unit_name||'').trim()).map((u:any)=>({name:String(u.unit_name).trim(),count:num(u.units_per_unit),price:num(u.selling_price_naira)}));
+  if(cleanUnits.some((u:any)=>!Number.isInteger(u.count)||u.count<2||!Number.isInteger(u.price)||u.price<1)) throw new Error('Each sale pack needs a name, at least 2 base units, and a whole-naira price.');
+  if(new Set(cleanUnits.map((u:any)=>u.name.toLowerCase())).size!==cleanUnits.length) throw new Error('Sale unit names must be unique.');
+  await run('DELETE FROM drug_units WHERE drug_id=?',[drugId]);
+  for(const u of cleanUnits) await run('INSERT INTO drug_units(drug_id,unit_name,units_per_unit,selling_price_naira,created_at,updated_at) VALUES(?,?,?,?,NOW(),NOW())',[drugId,u.name,u.count,u.price]);
 }
 
 async function write(path: string[], req: NextRequest, user: User) {
   const root = path[0]; const b: any = await body(req); const method = req.method;
   if (root === 'account' && path[1] === 'profile' && method === 'PATCH') {
     const fields: string[]=[]; const vals: any[]=[];
-    for (const key of ['name','email']) if (b[key] !== undefined) { fields.push(`${key}=?`); vals.push(String(b[key]).trim()); }
+    for (const key of ['name','email']) if (b[key] !== undefined) { const value=String(b[key]).trim(); if(!value)return fail(`${key==='name'?'Name':'Email'} is required.`,422); fields.push(`${key}=?`); vals.push(value); }
+    let savedPhotoPath:string|undefined;
+    const photo=b.profile_photo;
+    if(photo instanceof File&&photo.size>0){
+      const extensions:Record<string,string>={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+      const extension=extensions[photo.type];
+      if(!extension)return fail('Choose a JPG, PNG, or WebP profile photo.',422);
+      if(photo.size>2*1024*1024)return fail('Profile photos must be 2 MB or smaller.',422);
+      const relativePath=`uploads/profiles/${user.id}-${randomUUID()}.${extension}`;
+      const photoDirectory=nodePath.join(process.cwd(),'public','uploads','profiles');
+      await mkdir(photoDirectory,{recursive:true});
+      await writeFile(nodePath.join(process.cwd(),'public',relativePath),Buffer.from(await photo.arrayBuffer()));
+      savedPhotoPath=relativePath; fields.push('profile_photo_path=?'); vals.push(relativePath);
+    }
     if (b.password || b.current_password || String(b.email||'') !== user.email) {
       const bcrypt = await import('bcryptjs'); const existing = await one<any>('SELECT password FROM users WHERE id=?',[user.id]);
       if (!b.current_password || !existing || !(await bcrypt.default.compare(String(b.current_password),existing.password))) return fail('Your current password is incorrect.',422);
-      if (b.password) { if(String(b.password).length<8) return fail('New password must be at least 8 characters.',422); if(b.password_confirmation && b.password_confirmation!==b.password)return fail('Password confirmation does not match.',422); fields.push('password=?'); vals.push(await bcrypt.default.hash(String(b.password),12)); }
+      if (b.password) { if(String(b.password).length<8) return fail('New password must be at least 8 characters.',422); if(b.password_confirmation!==b.password)return fail('Password confirmation does not match.',422); fields.push('password=?'); vals.push(await bcrypt.default.hash(String(b.password),12)); }
     }
     if (fields.length) await run(`UPDATE users SET ${fields.join(',')},updated_at=NOW() WHERE id=?`,[...vals,user.id]);
-    return ok(await one('SELECT id,name,email,role,department_id,is_active FROM users WHERE id=?',[user.id]));
+    const updated=await one("SELECT id,name,email,role,department_id,is_active,CASE WHEN profile_photo_path IS NULL OR profile_photo_path='' THEN NULL ELSE CONCAT('/',profile_photo_path) END profile_photo_url FROM users WHERE id=?",[user.id]);
+    if(savedPhotoPath){const oldPath=(user as any).profile_photo_path;if(oldPath&&String(oldPath).startsWith('uploads/profiles/')&&!String(oldPath).includes('..'))await unlink(nodePath.join(process.cwd(),'public',String(oldPath))).catch(()=>{});}
+    return ok(updated);
   }
   if (root === 'drugs') {
+    if (path[1] === 'bulk' && method === 'POST') {
+      if (user.role !== 'hod') return fail('This action is unauthorized.', 403);
+      const entries = Array.isArray(b.drugs) ? b.drugs : [];
+      if (!entries.length || entries.length > 1000) return fail('Upload between 1 and 1,000 drug rows at a time.', 422);
+      const conn = await db.getConnection(); let imported = 0; let updated = 0; const errors: string[] = [];
+      try {
+        await conn.beginTransaction();
+        for (let i = 0; i < entries.length; i++) {
+          const item = entries[i] || {}; const name = String(item.name || '').trim(); const sku = String(item.sku || '').trim(); const unit = String(item.unit || 'Unit').trim();
+          if (!name || !sku || !unit) { errors.push(`Row ${i + 2}: drug name and SKU are required.`); continue; }
+          const barcode = String(item.barcode || '').trim() || null; const category = String(item.category || '').trim() || null;
+          const [existing]: any = await conn.execute('SELECT id FROM drugs WHERE sku=? OR (? IS NOT NULL AND barcode=?) LIMIT 1 FOR UPDATE', [sku, barcode, barcode]);
+          if (existing.length) { await conn.execute('UPDATE drugs SET name=?,barcode=?,category=?,unit=?,is_active=1,updated_at=NOW() WHERE id=?', [name, barcode, category, unit, existing[0].id]); updated++; }
+          else { await conn.execute('INSERT INTO drugs(name,barcode,sku,category,unit,is_active,created_at,updated_at) VALUES(?,?,?,?,?,1,NOW(),NOW())', [name, barcode, sku, category, unit]); imported++; }
+        }
+        await conn.commit(); return ok({ imported, updated, errors });
+      } catch (e: any) { await conn.rollback(); return fail(e.code === 'ER_DUP_ENTRY' ? 'Duplicate SKU or barcode in the uploaded file.' : (e.message || 'Bulk import failed.'), 422); }
+      finally { conn.release(); }
+    }
+
     if (method === 'POST' && user.role === 'hod') {
       const name=String(b.name||'').trim(), sku=String(b.sku||'').trim(), unit=String(b.unit||'').trim();
       if(!name||!sku||!unit) return fail('Drug name, SKU and unit are required.',422);
       const r=await run('INSERT INTO drugs(name,barcode,sku,category,unit,is_active,created_at,updated_at) VALUES(?,?,?,?,?,1,NOW(),NOW())',[name,String(b.barcode||'').trim()||null,sku,String(b.category||'').trim()||null,unit]);
+      if(Array.isArray(b.sale_units)) await saveDrugUnits(r.insertId,b.sale_units);
       return ok(await one('SELECT * FROM drugs WHERE id=?',[r.insertId]),201);
     }
     if (path[1] && ['PATCH','PUT'].includes(method)) {
@@ -173,6 +228,7 @@ async function write(path: string[], req: NextRequest, user: User) {
       if(!await one('SELECT id FROM drugs WHERE id=?',[num(path[1])])) return fail('Drug not found.',404);
       if(f.some(k=>['name','sku','unit'].includes(k)&&!String(b[k]||'').trim())) return fail('Drug name, SKU and unit cannot be empty.',422);
       if(f.length) await run(`UPDATE drugs SET ${f.map(k=>`${k}=?`).join(',')},updated_at=NOW() WHERE id=?`,[...f.map(k=>b[k]===''?null:b[k]),num(path[1])]);
+      if(Array.isArray(b.sale_units)) await saveDrugUnits(num(path[1]),b.sale_units);
       return ok(await one('SELECT * FROM drugs WHERE id=?',[num(path[1])]));
     }
     if (path[1] && method==='DELETE' && user.role==='hod') { await run('UPDATE drugs SET is_active=0 WHERE id=?',[num(path[1])]); return new NextResponse(null,{status:204}); }
@@ -184,8 +240,16 @@ async function write(path: string[], req: NextRequest, user: User) {
   }
   if (root === 'inventory' && path[1] === 'stock' && method==='POST') {
     if(!allowed(user,['hod','store_keeper'])) return fail('This action is unauthorized.',403);
-    if(await one("SELECT id FROM stock_counts WHERE department_id=? AND status='counting' LIMIT 1",[num(b.department_id)])) return fail('Stock receiving is paused while this pharmacy unit is being physically counted.',423);
-    const r=await run('INSERT INTO stocks(drug_id,department_id,batch_no,quantity,cost_price_naira,selling_price_naira,expiry_date,supplier_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,NOW(),NOW())',[b.drug_id,b.department_id,b.batch_no,b.quantity,b.cost_price_naira,b.selling_price_naira,b.expiry_date,b.supplier_id||null]); return ok(await one('SELECT * FROM stocks WHERE id=?',[r.insertId]),201);
+    const drugId=num(b.drug_id), departmentId=num(b.department_id), quantity=num(b.quantity), cost=num(b.cost_price_naira), price=num(b.selling_price_naira);
+    const batchNo=String(b.batch_no||'').trim(), expiry=String(b.expiry_date||'');
+    if(!Number.isInteger(drugId)||drugId<1||!Number.isInteger(departmentId)||departmentId<1||!Number.isInteger(quantity)||quantity<1||!Number.isFinite(cost)||cost<0||!Number.isFinite(price)||price<0||!batchNo||!/^\d{4}-\d{2}-\d{2}$/.test(expiry)) return fail('Enter a valid drug, department, batch number, quantity, prices, and expiry date.',422);
+    const drug=await one('SELECT id FROM drugs WHERE id=? AND is_active=1',[drugId]);
+    const department=await one('SELECT id FROM departments WHERE id=? AND is_active=1',[departmentId]);
+    const supplierId=b.supplier_id?num(b.supplier_id):null;
+    const supplier=supplierId?await one('SELECT id FROM suppliers WHERE id=?',[supplierId]):null;
+    if(!drug||!department||supplierId&&!supplier) return fail('Select an active drug and department, and a valid supplier.',422);
+    if(await one("SELECT id FROM stock_counts WHERE department_id=? AND status='counting' LIMIT 1",[departmentId])) return fail('Stock receiving is paused while this pharmacy unit is being physically counted.',423);
+    const r=await run('INSERT INTO stocks(drug_id,department_id,batch_no,quantity,cost_price_naira,selling_price_naira,expiry_date,supplier_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,NOW(),NOW())',[drugId,departmentId,batchNo,quantity,cost,price,expiry,supplierId]); return ok(await one('SELECT * FROM stocks WHERE id=?',[r.insertId]),201);
   }
   if (root==='inventory' && path[1]==='transfers' && method==='POST') {
     if(!allowed(user,['hod','store_keeper'])) return fail('This action is unauthorized.',403);
@@ -227,6 +291,30 @@ async function write(path: string[], req: NextRequest, user: User) {
     return new NextResponse(null,{status:204});
   }
   if (root==='sync' && path[1]==='sales' && method==='POST') return syncSale(b,user);
+  if (root==='refund-requests' && method==='POST') {
+    if (!allowed(user,['hod','pharmacy_staff'])) return fail('This action is unauthorized.',403);
+    const saleId=num(b.sale_id), reason=String(b.reason||'').trim(), items=Array.isArray(b.items)?b.items:[];
+    if(!saleId||!reason||!items.length)return fail('Select returned medicines and provide a reason.',422);
+    const conn=await db.getConnection();
+    try {
+      await conn.beginTransaction();
+      const [sales]:any=await conn.execute('SELECT * FROM sales WHERE id=? FOR UPDATE',[saleId]); const sale=sales[0];
+      if(!sale)throw new Error('Sale not found.'); if(user.role!=='hod'&&Number(sale.staff_id)!==Number(user.id))throw new Error('You can only request refunds for your own sales.');
+      const [existing]:any=await conn.execute('SELECT id FROM refund_requests WHERE sale_id=? AND status="pending" LIMIT 1',[saleId]); if(existing.length)throw new Error('This sale already has a refund request awaiting HOD review.');
+      const [saleItems]:any=await conn.execute('SELECT si.*,d.name FROM sale_items si JOIN drugs d ON d.id=si.drug_id WHERE si.sale_id=?',[saleId]); let amount=0;
+      for(const returned of items){const source=saleItems.find((x:any)=>Number(x.drug_id)===num(returned.drug_id));const qty=num(returned.quantity);if(!source||!Number.isInteger(qty)||qty<1||qty>Number(source.quantity))throw new Error('Returned quantity must be within the quantity sold.');amount+=qty*(Number(source.line_total_naira)/Number(source.quantity));}
+      amount=Math.round(amount*(Number(sale.subtotal_naira)>0?Number(sale.total_naira)/Number(sale.subtotal_naira):0));
+      const [created]:any=await conn.execute('INSERT INTO refund_requests(sale_id,requested_by,reason,items,requested_amount_naira,status,requested_at,created_at,updated_at) VALUES(?,?,?,?,?,"pending",NOW(),NOW(),NOW())',[saleId,user.id,reason,JSON.stringify(items.map((i:any)=>({drug_id:num(i.drug_id),quantity:num(i.quantity)}))),amount]);
+      await conn.commit();return ok(await one('SELECT * FROM refund_requests WHERE id=?',[created.insertId]),201);
+    } catch(e:any){await conn.rollback();return fail(e.message||'Refund request failed.',422)} finally{conn.release()}
+  }
+  if (root==='refund-requests'&&path[1]&&path[2]==='decision'&&method==='PATCH') {
+    if(user.role!=='hod')return fail('Only the HOD can approve or reject refund claims.',403);
+    const requestId=num(path[1]),decision=String(b.decision||'');if(!['approved','rejected'].includes(decision))return fail('Choose approve or reject.',422);
+    const request=await one<any>('SELECT * FROM refund_requests WHERE id=?',[requestId]);if(!request)return fail('Refund request not found.',404);if(request.status!=='pending')return fail('This request has already been decided.',409);
+    const approved=num(b.approved_amount_naira,Number(request.requested_amount_naira));if(decision==='approved'&&(!Number.isInteger(approved)||approved<0||approved>Number(request.requested_amount_naira)))return fail('Approved amount must be between zero and the requested claim.',422);
+    await run('UPDATE refund_requests SET status=?,approved_amount_naira=?,approved_by=?,decision_note=?,decided_at=NOW(),updated_at=NOW() WHERE id=? AND status="pending"',[decision,decision==='approved'?approved:null,user.id,String(b.decision_note||'').trim()||null,requestId]);return ok(await one('SELECT * FROM refund_requests WHERE id=?',[requestId]));
+  }
   if (root==='settings' && path[1]==='alerts' && method==='PUT' && user.role==='hod') { for(const [key,value] of [['low_stock_threshold',b.low_stock_threshold],['expiry_warning_days',b.expiry_warning_days]] as const) await run('INSERT INTO pharmacy_settings(`key`,`value`,updated_by,created_at,updated_at) VALUES(?,?,?,NOW(),NOW()) ON DUPLICATE KEY UPDATE `value`=VALUES(`value`),updated_by=VALUES(updated_by),updated_at=NOW()',[key,String(value),user.id]); return ok({low_stock_threshold:num(b.low_stock_threshold),expiry_warning_days:num(b.expiry_warning_days)}); }
   if (root==='sync'&&path[1]==='conflicts'&&path[2]&&path[3]==='review'&&method==='PATCH'&&user.role==='hod') { await run('UPDATE sync_conflicts SET status="reviewed",review_note=?,reviewed_by=?,reviewed_at=NOW(),updated_at=NOW() WHERE id=?',[b.review_note,user.id,num(path[2])]); return ok(await one('SELECT * FROM sync_conflicts WHERE id=?',[num(path[2])])); }
   if(root==='chat'&&path[1]&&path[2]==='messages'&&method==='POST'){const r=await run('INSERT INTO staff_messages(sender_id,recipient_id,body,created_at,updated_at) VALUES(?,?,?,NOW(),NOW())',[user.id,num(path[1]),String(b.body||'').slice(0,4000)]);return ok(await one('SELECT * FROM staff_messages WHERE id=?',[r.insertId]),201)}
@@ -246,8 +334,10 @@ async function write(path: string[], req: NextRequest, user: User) {
 async function syncSale(data: any, user: User) {
   if (!data.local_id || !data.invoice_no || !Array.isArray(data.items) || !data.items.length) return fail('Sale details are incomplete.',422);
   const subtotal=Number(data.subtotal_naira), discount=Number(data.discount_naira), total=Number(data.total_naira);
-  const itemsTotal=data.items.reduce((sum:number,item:any)=>sum+Number(item.quantity)*Number(item.unit_price_naira),0);
-  if(![subtotal,discount,total,itemsTotal].every(Number.isFinite)||subtotal<0||discount<0||discount>subtotal||total!==subtotal-discount||itemsTotal!==subtotal||data.items.some((item:any)=>!Number.isInteger(Number(item.drug_id))||!Number.isInteger(Number(item.quantity))||Number(item.quantity)<1||Number(item.unit_price_naira)<0)) return fail('Sale totals or item quantities are invalid.',422);
+  const itemsTotal=data.items.reduce((sum:number,item:any)=>sum+Number(item.line_total_naira??(Number(item.quantity)*Number(item.unit_price_naira))),0);
+  if(![subtotal,discount,total,itemsTotal].every(Number.isFinite)||subtotal<0||discount<0||discount>subtotal||total!==subtotal-discount||itemsTotal!==subtotal||data.items.some((item:any)=>!Number.isInteger(Number(item.drug_id))||!Number.isInteger(Number(item.quantity))||Number(item.quantity)<1||Number(item.unit_price_naira)<0||!Number.isInteger(Number(item.stock_quantity??item.quantity))||Number(item.stock_quantity??item.quantity)<1||!Number.isInteger(Number(item.line_total_naira??(Number(item.quantity)*Number(item.unit_price_naira))))||Number(item.line_total_naira??(Number(item.quantity)*Number(item.unit_price_naira)))<0)) return fail('Sale totals or item quantities are invalid.',422);
+  const soldAt=data.created_at?new Date(data.created_at):new Date();
+  if(Number.isNaN(soldAt.getTime())) return fail('Sale date is invalid.',422);
   const conn=await db.getConnection();
   try {
     await conn.beginTransaction();
@@ -260,9 +350,9 @@ async function syncSale(data: any, user: User) {
     let patientId=data.patient_id||null;
     if(!patientId&&data.folder_no){const [p]:any=await conn.execute('SELECT id FROM patients WHERE folder_no=?',[data.folder_no]);patientId=p[0]?.id||null}
     let prescription=null; let prescriptionLines:Map<number,any>|null=null;
-    if(data.prescription_id){const [rx]:any=await conn.execute('SELECT * FROM prescriptions WHERE id=? FOR UPDATE',[data.prescription_id]);prescription=rx[0];if(!prescription||Number(prescription.patient_id)!==Number(patientId)||!['pending','partially_dispensed'].includes(prescription.status))throw new Error('Prescription does not match this patient or is no longer available.');const [rxItems]:any=await conn.execute('SELECT * FROM prescription_items WHERE prescription_id=? FOR UPDATE',[prescription.id]);prescriptionLines=new Map(rxItems.map((line:any)=>[Number(line.drug_id),line]));const dispensed=new Map<number,number>();for(const item of data.items)dispensed.set(Number(item.drug_id),(dispensed.get(Number(item.drug_id))||0)+Number(item.quantity));for(const [drugId,quantity] of dispensed){const line=prescriptionLines.get(drugId);if(!line||quantity>Number(line.quantity)-Number(line.dispensed_quantity))throw new Error('Sale items exceed the remaining prescribed quantities.');}}
-    const [sale]:any=await conn.execute('INSERT INTO sales(invoice_no,client_sale_id,prescription_id,patient_id,staff_id,department_id,subtotal_naira,discount_naira,total_naira,payment_mode,is_synced,sold_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,1,?,?,NOW())',[data.invoice_no,data.local_id,data.prescription_id||null,patientId,user.id,department,data.subtotal_naira,data.discount_naira,data.total_naira,data.payment_mode,data.created_at||new Date(),new Date()]);
-    for(const item of data.items){const [stocks]:any=await conn.execute('SELECT * FROM stocks WHERE drug_id=? AND department_id=? AND quantity>0 AND expiry_date>=CURDATE() ORDER BY expiry_date FOR UPDATE',[item.drug_id,department]);const stock=stocks.find((s:any)=>s.quantity>=Number(item.quantity));if(!stock)throw new Error(`Insufficient stock for ${item.name||'medicine'}. Sale is held for HOD review.`);await conn.execute('UPDATE stocks SET quantity=quantity-? WHERE id=?',[item.quantity,stock.id]);await conn.execute('INSERT INTO sale_items(sale_id,drug_id,quantity,unit_price_naira,cost_price_naira,line_total_naira,created_at,updated_at) VALUES(?,?,?,?,?,?,NOW(),NOW())',[sale.insertId,item.drug_id,item.quantity,item.unit_price_naira,stock.cost_price_naira,Number(item.quantity)*Number(item.unit_price_naira)]);if(prescription)await conn.execute('UPDATE prescription_items SET dispensed_quantity=dispensed_quantity+? WHERE prescription_id=? AND drug_id=?',[item.quantity,prescription.id,item.drug_id]);}
+    if(data.prescription_id){const [rx]:any=await conn.execute('SELECT * FROM prescriptions WHERE id=? FOR UPDATE',[data.prescription_id]);prescription=rx[0];if(!prescription||Number(prescription.patient_id)!==Number(patientId)||!['pending','partially_dispensed'].includes(prescription.status))throw new Error('Prescription does not match this patient or is no longer available.');const [rxItems]:any=await conn.execute('SELECT * FROM prescription_items WHERE prescription_id=? FOR UPDATE',[prescription.id]);prescriptionLines=new Map(rxItems.map((line:any)=>[Number(line.drug_id),line]));const dispensed=new Map<number,number>();for(const item of data.items)dispensed.set(Number(item.drug_id),(dispensed.get(Number(item.drug_id))||0)+Number(item.stock_quantity??item.quantity));dispensed.forEach((quantity,drugId)=>{const line=prescriptionLines!.get(drugId);if(!line||quantity>Number(line.quantity)-Number(line.dispensed_quantity))throw new Error('Sale items exceed the remaining prescribed quantities.')});}
+    const [sale]:any=await conn.execute('INSERT INTO sales(invoice_no,client_sale_id,prescription_id,patient_id,staff_id,department_id,subtotal_naira,discount_naira,total_naira,client_name,patient_type,payment_mode,is_synced,sold_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,NOW())',[data.invoice_no,data.local_id,data.prescription_id||null,patientId,user.id,department,data.subtotal_naira,data.discount_naira,data.total_naira,patientId?null:(data.client_name||data.patient_name||null),data.patient_type==='Inpatient'?'Inpatient':'Outpatient',data.payment_mode,soldAt,new Date()]);
+    for(const item of data.items){const baseQuantity=num(item.stock_quantity,item.quantity);const lineTotal=num(item.line_total_naira,Number(item.quantity)*Number(item.unit_price_naira));const [stocks]:any=await conn.execute('SELECT * FROM stocks WHERE drug_id=? AND department_id=? AND quantity>0 AND expiry_date>=CURDATE() ORDER BY expiry_date FOR UPDATE',[item.drug_id,department]);const stock=stocks.find((s:any)=>s.quantity>=baseQuantity);if(!stock)throw new Error(`Insufficient stock for ${item.name||'medicine'}. Sale is held for HOD review.`);await conn.execute('UPDATE stocks SET quantity=quantity-? WHERE id=?',[baseQuantity,stock.id]);await conn.execute('INSERT INTO sale_items(sale_id,drug_id,quantity,sale_quantity,sale_unit_name,unit_price_naira,cost_price_naira,line_total_naira,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,NOW(),NOW())',[sale.insertId,item.drug_id,baseQuantity,item.quantity,item.sale_unit_name||null,item.unit_price_naira,stock.cost_price_naira,lineTotal]);if(prescription)await conn.execute('UPDATE prescription_items SET dispensed_quantity=dispensed_quantity+? WHERE prescription_id=? AND drug_id=?',[baseQuantity,prescription.id,item.drug_id]);}
     if(prescription){const [remaining]:any=await conn.execute('SELECT COUNT(*) count FROM prescription_items WHERE prescription_id=? AND dispensed_quantity<quantity',[prescription.id]);await conn.execute('UPDATE prescriptions SET status=?,updated_at=NOW() WHERE id=?',[remaining[0].count?'partially_dispensed':'dispensed',prescription.id])}
     await conn.execute('UPDATE sync_conflicts SET status="resolved",updated_at=NOW() WHERE client_sale_id=?',[data.local_id]);await conn.commit();return ok({sale:{id:sale.insertId,...data},is_synced:true,local_id:data.local_id},201);
   }catch(e:any){await conn.rollback();try{await run('INSERT INTO sync_conflicts(client_sale_id,invoice_no,staff_id,department_id,payload,reason,status,created_at,updated_at) VALUES(?,?,?,?,?,? ,"pending",NOW(),NOW()) ON DUPLICATE KEY UPDATE payload=VALUES(payload),reason=VALUES(reason),status="pending",updated_at=NOW()',[data.local_id,data.invoice_no,user.id,user.department_id||2,JSON.stringify(data),e.message])}catch{}return fail(e.message||'Sale sync failed.',409)}finally{conn.release()}
@@ -275,7 +365,7 @@ async function dispatch(req: NextRequest, params: { path: string[] }) {
     if(path[0]==='desktop-discovery'&&method==='GET')return ok({api_url:'/api'});
     const auth=await requireUser(req);if('error' in auth)return auth.error;
     const roleRules: Array<[string, string[], string?]> = [
-      ['dashboard',['hod','md']],['reports',['hod','md']],['sales',['hod','md','pharmacy_staff']],
+      ['dashboard',['hod','md']],['reports',['hod','md']],['sales',['hod','md','pharmacy_staff']],['refund-requests',['hod','pharmacy_staff']],
       ['drugs',['hod','store_keeper','pharmacy_staff','md','doctor']],['patients',['hod','pharmacy_staff','doctor']],
       ['prescriptions',['hod','doctor','pharmacy_staff']],['inventory',['hod','store_keeper','pharmacy_staff','md']],
       ['stock-counts',['hod','store_keeper','pharmacy_staff']],['suppliers',['hod','store_keeper']],['departments',['hod','store_keeper','pharmacy_staff','md']],
@@ -301,3 +391,8 @@ export const POST=(req:NextRequest,{params}:{params:{path:string[]}})=>dispatch(
 export const PUT=(req:NextRequest,{params}:{params:{path:string[]}})=>dispatch(req,params);
 export const PATCH=(req:NextRequest,{params}:{params:{path:string[]}})=>dispatch(req,params);
 export const DELETE=(req:NextRequest,{params}:{params:{path:string[]}})=>dispatch(req,params);
+
+
+
+
+

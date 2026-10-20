@@ -75,15 +75,15 @@ tbody tr:hover { background-color:#f8fbf9; }
   .receipt-preview-copy { width:72mm; max-width:100%; min-height:90mm; margin:0 auto; padding:4mm; color:#000; background:#fff; box-shadow:0 2px 12px rgb(0 0 0 / 12%); font-family:Arial,sans-serif; }
 }
 @media print {
-  @page { size:80mm auto; margin:4mm; }
-  html,body { zoom:1 !important; background:#fff !important; }
+  @page { size:80mm auto; margin:2mm; }
+  html,body { zoom:1 !important; width:100% !important; min-height:0 !important; background:#fff !important; }
   body * { visibility:hidden !important; }
   body[data-print-target="receipt"] #receipt-print,
   body[data-print-target="receipt"] #receipt-print *,
   body[data-print-target="label"] #patient-label,
   body[data-print-target="label"] #patient-label * { visibility:visible !important; }
   body[data-print-target="receipt"] #receipt-print,
-  body[data-print-target="label"] #patient-label { display:block !important; position:absolute; left:0; top:0; width:72mm; padding:0; color:#000; background:#fff; font-family:Arial,sans-serif; }
-  .receipt-copy { width:72mm; padding:2mm; color:#000; background:#fff; font-family:Arial,sans-serif; font-size:10pt; }
+  body[data-print-target="label"] #patient-label { display:block !important; position:absolute; left:0; top:0; width:76mm; max-width:76mm; padding:0; color:#000 !important; background:#fff !important; font-family:Arial,sans-serif; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .receipt-copy { box-sizing:border-box; width:76mm; max-width:76mm; padding:2mm; color:#000 !important; background:#fff !important; font-family:Arial,sans-serif; font-size:10pt; overflow-wrap:anywhere; }
   .receipt-copy + .receipt-copy { break-before:page; page-break-before:always; }
 }

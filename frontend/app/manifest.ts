@@ -1,2 +1,2 @@
 import type { MetadataRoute } from 'next';
-export default function manifest(): MetadataRoute.Manifest { return { name: 'General Hospital BKD Pharmacy', short_name: 'BKD Pharmacy', description: 'Offline-first pharmacy point of sale and inventory', start_url: '/', display: 'standalone', background_color: '#f6f8f7', theme_color: '#117158', icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' }] }; }
+export default function manifest(): MetadataRoute.Manifest { return { name: 'General Hospital BKD Pharmacy', short_name: 'BKD Pharmacy', description: 'Offline-first pharmacy point of sale and inventory', start_url: '/', display: 'standalone', background_color: '#f6f8f7', theme_color: '#117158', icons: [{ src: '/logo.jpeg', sizes: 'any', type: 'image/jpeg' }] }; }
