@@ -168,6 +168,25 @@ async function saveDrugUnits(drugId:number, units:any[]) {
 
 async function write(path: string[], req: NextRequest, user: User) {
   const root = path[0]; const b: any = await body(req); const method = req.method;
+  if (root === 'departments') {
+    if (user.role !== 'hod') return fail('This action is unauthorized.', 403);
+    if (method === 'POST') {
+      const name = String(b.name || '').trim();
+      if (!name || name.length > 255) return fail('Enter a department name up to 255 characters.', 422);
+      const code = name.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 255);
+      if (!code) return fail('Enter a department name containing letters or numbers.', 422);
+      const result = await run('INSERT INTO departments(name,code,type,is_active,created_at,updated_at) VALUES(?,?,?,1,NOW(),NOW())', [name, code, 'department']);
+      return ok(await one('SELECT id,name,code,type FROM departments WHERE id=?', [result.insertId]), 201);
+    }
+    if (path[1] && method === 'DELETE') {
+      const id = num(path[1]);
+      if (!Number.isInteger(id) || id < 1) return fail('Invalid department.', 422);
+      const department = await one('SELECT id FROM departments WHERE id=? AND is_active=1', [id]);
+      if (!department) return fail('Department not found.', 404);
+      await run('UPDATE departments SET is_active=0,updated_at=NOW() WHERE id=?', [id]);
+      return new NextResponse(null, { status: 204 });
+    }
+  }
   if (root === 'account' && path[1] === 'profile' && method === 'PATCH') {
     const fields: string[]=[]; const vals: any[]=[];
     for (const key of ['name','email']) if (b[key] !== undefined) { const value=String(b[key]).trim(); if(!value)return fail(`${key==='name'?'Name':'Email'} is required.`,422); fields.push(`${key}=?`); vals.push(value); }

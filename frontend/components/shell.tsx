@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { Activity, ArrowLeftRight, BarChart3, ChevronDown, ClipboardCheck, FileText, LayoutDashboard, LoaderCircle, LogOut, Menu, Moon, Paintbrush, Pill, Settings, ShieldCheck, ShoppingCart, Sun, Users, Warehouse, Wifi, WifiOff, X, UserRound, MessageCircle } from 'lucide-react';
+import { Activity, ArrowLeftRight, BarChart3, ChevronDown, ClipboardCheck, FileText, LayoutDashboard, LoaderCircle, LogOut, Menu, Moon, Paintbrush, Pill, Settings, ShieldCheck, ShoppingCart, Sun, Users, Warehouse, Wifi, WifiOff, X, UserRound, MessageCircle, Building2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { resolveApiUrl } from '@/lib/api';
 
@@ -31,12 +31,13 @@ const nav=[
   {label:'Physical stock counts',href:'/stock-counts',icon:ClipboardCheck,roles:['pharmacy_staff']},
   {label:'Sales reports',href:'/reports',icon:BarChart3,roles:['hod','md']},
   {label:'Staff management',href:'/staff',icon:ShieldCheck,roles:['hod']},
+  {label:'Manage departments',href:'/departments',icon:Building2,roles:['hod']},
   {label:'Prescriptions',href:'/prescriptions',icon:FileText,roles:['hod','doctor','pharmacy_staff']},
   {label:'Staff chat',href:'/chat',icon:MessageCircle,roles:['hod','store_keeper','pharmacy_staff','md','doctor']},
   {label:'Settings & conflicts',href:'/settings',icon:Settings,roles:['hod']}
 ];
 const homeFor=(role:Role)=>role==='pharmacy_staff'?'/pos':role==='store_keeper'?'/inventory':role==='doctor'?'/prescriptions':'/';
-const canVisit=(role:Role,path:string)=>path==='/login'||path==='/account'||path==='/chat'?true:(path==='/'?['hod','md'].includes(role):path==='/pos'||path==='/refunds'?['hod','pharmacy_staff'].includes(role):path==='/patients'?['hod','pharmacy_staff'].includes(role):path==='/prescriptions'?['hod','doctor','pharmacy_staff'].includes(role):path==='/settings'?role==='hod':path==='/stock-counts'?['hod','store_keeper','pharmacy_staff'].includes(role):path==='/inventory'||path==='/drugs'||path==='/transfers'?['hod','store_keeper'].includes(role):path==='/reports'?['hod','md'].includes(role):path==='/staff'?role==='hod':false);
+const canVisit=(role:Role,path:string)=>path==='/login'||path==='/account'||path==='/chat'?true:(path==='/'?['hod','md'].includes(role):path==='/pos'||path==='/refunds'?['hod','pharmacy_staff'].includes(role):path==='/patients'?['hod','pharmacy_staff'].includes(role):path==='/prescriptions'?['hod','doctor','pharmacy_staff'].includes(role):path==='/settings'||path==='/departments'?role==='hod':path==='/stock-counts'?['hod','store_keeper','pharmacy_staff'].includes(role):path==='/inventory'||path==='/drugs'||path==='/transfers'?['hod','store_keeper'].includes(role):path==='/reports'?['hod','md'].includes(role):path==='/staff'?role==='hod':false);
 
 function LoadingScreen(){return <main className="grid min-h-screen place-items-center bg-[#f6f8f7] px-5"><div className="w-full max-w-xs text-center"><div className="relative mx-auto mb-5 flex h-14 w-14 items-center justify-center"><div className="absolute inset-0 rounded-full border-2 border-brand-100"/><div className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-brand-600"/><Image src="/logo.jpeg" alt="Birnin Kudu General Hospital" width={40} height={40} className="h-9 w-9 rounded-full bg-white object-contain p-1"/></div><div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-[11px] font-medium text-[#75867e] shadow-soft"><LoaderCircle size={14} className="animate-spin text-brand-600"/>Checking your secure session</div><div className="mx-auto mt-9 h-px w-16 bg-[#dfe9e3]"/><p className="mt-4 text-[9px] font-semibold uppercase tracking-[0.22em] text-[#91a099]">Powered by</p><p className="mt-1 text-xs font-bold tracking-wide text-[#536a60]">Kowaguru Technology Limited.</p></div></main>}
 
