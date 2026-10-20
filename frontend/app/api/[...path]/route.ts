@@ -82,9 +82,15 @@ async function read(path: string[], req: NextRequest, user: User) {
     const s = q.get('q'); return ok(page(await getRows(`SELECT * FROM suppliers ${s ? 'WHERE name LIKE ?' : ''} ORDER BY name LIMIT 50`, s ? [`%${s}%`] : []), 50, 50));
   }
   if (root === 'sales') {
-    const sales = await getRows(`SELECT s.*,JSON_OBJECT('full_name',COALESCE(p.full_name,s.client_name),'folder_no',p.folder_no) patient FROM sales s LEFT JOIN patients p ON p.id=s.patient_id WHERE 1=1 ${user.role === 'pharmacy_staff' ? 'AND s.staff_id=?' : ''} ORDER BY s.sold_at DESC LIMIT 30`, user.role === 'pharmacy_staff' ? [user.id] : []);
+    const search=String(q.get('q')||'').trim(); const conditions:string[]=[]; const params:any[]=[];
+    if(user.role==='pharmacy_staff'){conditions.push('s.staff_id=?');params.push(user.id)}
+    if(search){const like=`%${search}%`;conditions.push(`(s.invoice_no LIKE ? OR CAST(s.id AS CHAR) LIKE ? OR COALESCE(p.full_name,s.client_name,'') LIKE ? OR COALESCE(p.folder_no,'') LIKE ? OR COALESCE(p.phone,'') LIKE ? OR EXISTS(SELECT 1 FROM sale_items si JOIN drugs dx ON dx.id=si.drug_id WHERE si.sale_id=s.id AND dx.name LIKE ?))`);params.push(like,like,like,like,like,like)}
+    const paymentMode=String(q.get('payment_mode')||'');if(['Cash','Transfer','NHIS','Staff Credit'].includes(paymentMode)){conditions.push('s.payment_mode=?');params.push(paymentMode)}
+    const fromDate=String(q.get('from')||'');if(/^\d{4}-\d{2}-\d{2}$/.test(fromDate)){conditions.push('DATE(s.sold_at)>=?');params.push(fromDate)}
+    const toDate=String(q.get('to')||'');if(/^\d{4}-\d{2}-\d{2}$/.test(toDate)){conditions.push('DATE(s.sold_at)<=?');params.push(toDate)}
+    const sales = await getRows(`SELECT s.*,JSON_OBJECT('full_name',COALESCE(p.full_name,s.client_name),'folder_no',p.folder_no,'phone',p.phone) patient FROM sales s LEFT JOIN patients p ON p.id=s.patient_id ${conditions.length?`WHERE ${conditions.join(' AND ')}`:''} ORDER BY s.sold_at DESC LIMIT 50`, params);
     for (const sale of sales as any[]) sale.items = await getRows('SELECT si.*,JSON_OBJECT("id",d.id,"name",d.name) drug FROM sale_items si JOIN drugs d ON d.id=si.drug_id WHERE si.sale_id=?', [sale.id]);
-    return ok(page(sales as any[], (sales as any[]).length, 30));
+    return ok(page(sales as any[], (sales as any[]).length, 50));
   }
   if (root === 'refund-requests') {
     const sql = `SELECT r.*,s.invoice_no,s.total_naira,s.client_name,JSON_OBJECT('full_name',COALESCE(p.full_name,s.client_name),'folder_no',p.folder_no) patient,JSON_OBJECT('name',u.name) requester FROM refund_requests r JOIN sales s ON s.id=r.sale_id LEFT JOIN patients p ON p.id=s.patient_id JOIN users u ON u.id=r.requested_by ${user.role === 'hod' ? '' : 'WHERE r.requested_by=?'} ORDER BY r.requested_at DESC LIMIT 100`;
