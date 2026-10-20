@@ -3,10 +3,10 @@ import mysql, { type Pool, type RowDataPacket, type ResultSetHeader } from 'mysq
 declare global { var mysqlPool: Pool | undefined }
 
 export const db = global.mysqlPool ?? mysql.createPool({
-  host: process.env.DB_HOST || process.env.MYSQLHOST || 'xu709azqq3w02efz9phe70dc',
+  host: process.env.DB_HOST || process.env.MYSQLHOST || 'j14iqr5n5teztfsidl2sbrn9',
   port: Number(process.env.DB_PORT || process.env.MYSQLPORT || 3306),
   user: process.env.DB_USERNAME || process.env.MYSQLUSER || 'zc_hospital',
-  password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'vWMQtSlsr15NP2tzF1cAngHbW2T8-fjT',
+  password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'zCcipEq78J51YCiy2QIWvM_divbIHhdY',
   database: process.env.DB_DATABASE || process.env.MYSQLDATABASE || 'hospital',
   waitForConnections: true,
   connectionLimit: 1000,

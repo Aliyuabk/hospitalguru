@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL UNIQUE,
  email_verified_at TIMESTAMP NULL, password VARCHAR(255) NOT NULL, role VARCHAR(32) NOT NULL, department_id BIGINT UNSIGNED NULL,
  is_active TINYINT(1) NOT NULL DEFAULT 1, remember_token VARCHAR(100) NULL, profile_photo_path VARCHAR(255) NULL,
+ phone VARCHAR(32) NULL, designation VARCHAR(120) NULL, employee_id VARCHAR(64) NULL, address VARCHAR(500) NULL,
+ emergency_contact_name VARCHAR(255) NULL, emergency_contact_phone VARCHAR(32) NULL, professional_license_no VARCHAR(100) NULL,
  created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL, CONSTRAINT users_department_fk FOREIGN KEY(department_id) REFERENCES departments(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS patients (

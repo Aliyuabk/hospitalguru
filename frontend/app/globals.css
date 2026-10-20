@@ -58,11 +58,22 @@ button,input,select { font: inherit; }
 .loading-track-bar { animation: loading-sweep 1.6s ease-in-out infinite; }
 button,a,[role="button"] { transition: color .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease; }
 button:not(:disabled):active,[role="button"]:active { transform:scale(.985); }
+button:not(:disabled):hover { box-shadow:0 3px 10px rgb(23 44 40 / 8%); }
 :focus-visible { outline:3px solid #168568; outline-offset:3px; }
 input,select,textarea { transition:border-color .16s ease, box-shadow .16s ease; }
+input:focus,select:focus,textarea:focus { box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-main, #117158), transparent 84%); }
 tbody tr { transition:background-color .14s ease; }
 tbody tr:hover { background-color:#f8fbf9; }
+[data-topbar-themed],.sidebar-themed { transition:background-color .28s ease,color .28s ease; }
+.appearance-backdrop { animation:backdrop-in .18s ease-out both; }
+.appearance-panel { transform-origin:bottom left; animation:panel-in .22s cubic-bezier(.2,.8,.2,1) both; }
+.mobile-menu-backdrop { animation:backdrop-in .2s ease-out both; }
+.mobile-menu-enter { animation:drawer-in .24s cubic-bezier(.2,.8,.2,1) both; }
+.appearance-panel button[aria-pressed="true"] { box-shadow:0 0 0 2px color-mix(in srgb, var(--accent-main, #117158), transparent 70%); }
 @keyframes screen-arrive { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes backdrop-in { from { opacity:0; } to { opacity:1; } }
+@keyframes panel-in { from { opacity:0; transform:translateY(10px) scale(.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+@keyframes drawer-in { from { opacity:.7; transform:translateX(-18px); } to { opacity:1; transform:translateX(0); } }
 @keyframes pharmacy-float { 0%,100% { transform:translateY(0) rotate(-.5deg); } 50% { transform:translateY(-8px) rotate(.7deg); } }
 @keyframes loading-breathe { 0%,100% { transform:scale(1); } 50% { transform:scale(1.06); } }
 @keyframes orbit { to { transform:rotate(360deg); } }
