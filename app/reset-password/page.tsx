@@ -1,0 +1,3 @@
+'use client';
+import Link from 'next/link';
+export default function ResetPassword(){return <main className="auth-simple"><div className="auth-simple-card"><div className="auth-mobile-mark"><span>+</span> BKD GENERAL HOSPITAL</div><div className="auth-kicker">ACCOUNT RECOVERY</div><h1>Reset password</h1><div className="auth-info"><span>i</span><div><b>Recovery service not configured</b><small>Password reset links require a verified email delivery provider. Contact hospital IT to reset your account.</small></div></div><Link className="auth-submit auth-submit-link" href="/login">Return to sign in <span>→</span></Link></div></main>}

@@ -1,0 +1,3 @@
+'use client';
+import Link from 'next/link';
+export default function ForgotPassword(){return <main className="auth-simple"><div className="auth-simple-card"><div className="auth-mobile-mark"><span>+</span> BKD GENERAL HOSPITAL</div><div className="auth-kicker">ACCOUNT RECOVERY</div><h1>Forgot password?</h1><p className="auth-description">Password recovery links must be sent through the hospital’s verified email service.</p><div className="auth-info"><span>i</span><div><b>Email recovery is not configured</b><small>Contact hospital IT to reset your password. The system will not reveal whether a username or email exists.</small></div></div><Link className="back-link" href="/login">← Back to sign in</Link></div></main>}

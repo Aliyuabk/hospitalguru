@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function AccessDenied(){return <main className="auth-simple"><div className="auth-simple-card denied-card"><div className="denied-icon">⌑</div><div className="auth-kicker">ACCESS CONTROL</div><h1>Access restricted</h1><p className="auth-description">Your account does not have permission to open this page. Return to your assigned workspace or contact an administrator.</p><Link className="auth-submit auth-submit-link" href="/login">Return to sign in <span>→</span></Link></div></main>}
