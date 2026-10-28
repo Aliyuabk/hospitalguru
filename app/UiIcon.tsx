@@ -21,6 +21,9 @@ const shapes: Record<string, React.ReactNode> = {
   users: <><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5"/></>,
   location: <><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,
   close: <><path d="m6 6 12 12M18 6 6 18"/></>,
+  eye: <><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></>,
+  'eye-off': <><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a16.5 16.5 0 0 1-3.1 4.1M6.2 6.3C3.5 8.1 2 12 2 12s3.5 7 10 7c1 0 1.9-.2 2.7-.4"/></>,
+  lock: <><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></>,
   chevron: <><path d="m6 9 6 6 6-6"/></>,
   refresh: <><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 2M4 16l2 2a7 7 0 0 0 12.5-3"/></>,
   download: <><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v4h16v-4"/></>,
@@ -28,7 +31,10 @@ const shapes: Record<string, React.ReactNode> = {
 
 export default function UiIcon({ name, size = 18, className }: { name: string; size?: number; className?: string }) {
   const key = name.toLowerCase();
-  const icon = key === 'close' ? 'close'
+  const icon = key === 'lock' ? 'lock'
+    : key === 'eye' ? 'eye'
+    : key === 'eye-off' ? 'eye-off'
+    : key === 'close' ? 'close'
     : key === 'chevron' ? 'chevron'
     : key.includes('refresh') ? 'refresh'
     : key.includes('export') || key.includes('download') ? 'download'

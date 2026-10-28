@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HospitalGuru | Client presentation and workflow guide</title>
+<style>
+@page{size:A4;margin:0}*{box-sizing:border-box}body{margin:0;background:#e9eef3;color:#15304a;font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.42}.page{position:relative;width:210mm;height:296mm;margin:10mm auto;padding:17mm 18mm 18mm;background:#fff;overflow:hidden;page-break-after:always}.page:last-child{page-break-after:auto}.topline{display:flex;justify-content:space-between;align-items:center;padding-bottom:8mm;border-bottom:1px solid #dbe5eb;color:#708398;font-size:8pt;text-transform:uppercase;letter-spacing:.12em}.brand{display:flex;align-items:center;gap:8px;color:#133a56;font-weight:800;letter-spacing:.02em}.brandmark{display:grid;place-items:center;width:27px;height:27px;border-radius:8px;background:#087b61;color:white;font-size:19px;line-height:1}.section-tag{color:#087b61;font-weight:700}.hero{height:296mm;margin:-17mm -18mm -18mm;padding:22mm 19mm 17mm;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,#0b2946 0%,#104368 55%,#087b61 100%);color:#fff}.hero .brand{color:#fff;font-size:12pt}.hero .brandmark{background:#fff;color:#087b61;width:34px;height:34px;font-size:23px}.hero-kicker{margin-top:25mm;color:#a8e5d1;font-weight:700;font-size:9pt;letter-spacing:.2em;text-transform:uppercase}.hero h1{max-width:150mm;margin:6mm 0 5mm;font-size:36pt;line-height:1.06;letter-spacing:-.04em}.hero .lead{max-width:135mm;color:#d5e6ee;font-size:15pt;line-height:1.4}.hero-rule{width:35mm;height:3px;margin:12mm 0 8mm;background:#63d3ad}.hero-claims{display:flex;gap:10mm;margin-top:4mm;color:#d7f2e9;font-size:10pt}.hero-bottom{display:flex;justify-content:space-between;align-items:end;border-top:1px solid #ffffff35;padding-top:7mm;color:#d5e6ee;font-size:9pt}.hero-date{color:#9fb8c8}.title{margin:8mm 0 2mm;color:#103651;font-size:27pt;line-height:1.08;letter-spacing:-.035em}.intro{max-width:165mm;margin:2mm 0 8mm;color:#64788b;font-size:11pt}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:5mm}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm}.card{padding:5mm;border:1px solid #dfe8ee;border-radius:10px;background:#fbfdfe}.card h3{margin:0 0 2mm;color:#123b59;font-size:12pt}.card p{margin:0;color:#5e7284;font-size:9.2pt}.card .num{display:grid;place-items:center;width:24px;height:24px;margin-bottom:3mm;border-radius:50%;background:#e4f5ee;color:#087b61;font-size:10pt;font-weight:800}.card .smallcap{margin-bottom:2mm;color:#087b61;font-size:8pt;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.callout{margin:6mm 0;padding:5mm 6mm;border-left:4px solid #0b936f;border-radius:0 8px 8px 0;background:#eef8f4;color:#385b59}.callout strong{color:#0b604d}.callout p{margin:1mm 0 0}.flow{display:flex;align-items:stretch;gap:2mm;margin:6mm 0}.flow-step{flex:1;padding:4mm 3mm;border:1px solid #dce8ee;border-radius:8px;background:#f7fafb;text-align:center}.flow-step b{display:block;margin-bottom:1mm;color:#0d745d;font-size:9pt}.flow-step span{display:block;color:#62788a;font-size:8pt}.arrow{align-self:center;color:#85a0ac;font-size:17pt;font-weight:700}.table{width:100%;border-collapse:collapse;margin:4mm 0 6mm;font-size:8.6pt}.table th{padding:3mm;background:#123b59;color:#fff;text-align:left;font-weight:700}.table td{padding:3mm;border-bottom:1px solid #e2e9ee;vertical-align:top}.table tr:nth-child(even) td{background:#f7fafb}.role{color:#087b61;font-weight:700;white-space:nowrap}.steps{counter-reset:item;list-style:none;margin:4mm 0;padding:0}.steps li{position:relative;min-height:13mm;margin:0 0 3mm;padding:0 0 0 12mm;color:#536b7d}.steps li:before{counter-increment:item;content:counter(item);position:absolute;left:0;top:0;display:grid;place-items:center;width:8mm;height:8mm;border-radius:50%;background:#e6f4ee;color:#087b61;font-weight:800}.steps b{display:block;margin-bottom:1mm;color:#173e5a}.pill{display:inline-block;margin:0 1mm 1mm 0;padding:1mm 2.5mm;border-radius:20px;background:#eaf4f7;color:#315e75;font-size:7.5pt;font-weight:700}.note{color:#728698;font-size:8.5pt}.footer{position:absolute;right:18mm;bottom:8mm;left:18mm;display:flex;justify-content:space-between;border-top:1px solid #e2e9ee;padding-top:3mm;color:#8191a0;font-size:7.5pt}.footer b{color:#31566b}.checklist{list-style:none;margin:3mm 0;padding:0}.checklist li{margin:2.5mm 0;padding-left:7mm;position:relative;color:#526a7d}.checklist li:before{content:'✓';position:absolute;left:0;color:#0b936f;font-weight:800}.closing{margin-top:10mm;padding:9mm;border-radius:12px;background:#103b56;color:#fff}.closing strong{display:block;margin-bottom:2mm;font-size:17pt}.closing p{margin:0;color:#d0e2e9}.small{font-size:8pt;color:#738697}.nowrap{white-space:nowrap}
+@media print{body{background:#fff}.page{margin:0;box-shadow:none}}
+</style></head><body>
+<section class="page">
+ <div class="hero">
+  <div class="brand"><span class="brandmark">+</span><span>HOSPITALGURU <span style="font-weight:400;opacity:.8">/ PHARMACY</span></span></div>
+  <div><div class="hero-kicker">Client presentation &amp; workflow guide</div><h1>Pharmacy operations,<br>connected end to end.</h1><div class="lead">A practical guide to presenting HospitalGuru and walking a client through the pharmacy workflows staff follow every day.</div><div class="hero-rule"></div><div class="hero-claims"><span>Care, organized.</span><span>Trusted care. Better operations.</span></div></div>
+  <div class="hero-bottom"><span>Pharmacy Inventory, Dispensing &amp; Management</span><span class="hero-date">Prepared October 2026</span></div>
+ </div>
+</section>
+
+<section class="page">
+ <div class="topline"><div class="brand"><span class="brandmark">+</span> HospitalGuru</div><span class="section-tag">01 / Present the product</span></div>
+ <h2 class="title">One pharmacy platform.<br>Clear handoffs at every step.</h2><p class="intro">HospitalGuru links central-store stock, pharmacy dispensing, payment checks and operational oversight. Each person works from a role-based workspace, with records and approvals kept in the platform.</p>
+ <div class="flow"><div class="flow-step"><b>Procure</b><span>Supplier orders</span></div><div class="arrow">›</div><div class="flow-step"><b>Receive</b><span>GRN &amp; inspection</span></div><div class="arrow">›</div><div class="flow-step"><b>Replenish</b><span>Requests &amp; transfers</span></div><div class="arrow">›</div><div class="flow-step"><b>Dispense</b><span>Invoice &amp; payment</span></div><div class="arrow">›</div><div class="flow-step"><b>Reconcile</b><span>Close &amp; audit</span></div></div>
+ <div class="grid2">
+  <div class="card"><div class="smallcap">What to emphasize</div><h3>Stock is controlled</h3><p>Available quantities account for reserved, quarantined and expired stock. An invoice reserves stock; verified payment completes the sale and posts the inventory movement.</p></div>
+  <div class="card"><div class="smallcap">What to emphasize</div><h3>Approvals have owners</h3><p>Receiving, transfers, returns and payment verification pass to authorized roles. The requester cannot approve certain actions they initiated.</p></div>
+  <div class="card"><div class="smallcap">What to emphasize</div><h3>Each location sees its work</h3><p>Staff are assigned to role and location workspaces. Dashboards and lists use platform records and authorized access.</p></div>
+  <div class="card"><div class="smallcap">What to emphasize</div><h3>History is traceable</h3><p>Supported transactions create references and audit records, so teams can follow what happened and who handled the step.</p></div>
+ </div>
+ <div class="callout"><strong>Suggested opening</strong><p>“HospitalGuru organizes pharmacy operations from replenishment through dispensing, with clear approval and payment handoffs and stock balances that reflect completed activity.”</p></div>
+ <h3 style="margin:7mm 0 2mm">Role-based workspaces</h3>
+ <table class="table"><thead><tr><th>Role</th><th>Primary responsibility in the workflow</th></tr></thead><tbody>
+  <tr><td class="role">Procurement Officer</td><td>Supplier records, purchase requests and purchase orders.</td></tr><tr><td class="role">DRF Store Keeper</td><td>Receive goods, manage central stock, dispatch transfers and process physical returns.</td></tr><tr><td class="role">Head Pharmacist</td><td>Review GRNs, transfers, returns and pharmacy inventory exceptions.</td></tr><tr><td class="role">Pharmacy Dispenser</td><td>Create stock requests, dispense, issue invoices and submit payment evidence.</td></tr><tr><td class="role">Pharmacy Supervisor</td><td>Oversee daily activity, receive transfers and close/reconcile the business day.</td></tr><tr><td class="role">Cashier</td><td>Independently verify or reject submitted payment evidence.</td></tr><tr><td class="role">Super Administrator / CMD / Auditor</td><td>Authorized administration, oversight and audit review according to assigned access.</td></tr>
+ </tbody></table>
+ <div class="footer"><span>HOSPITALGURU · CLIENT PRESENTATION GUIDE</span><span><b>01</b> / 06</span></div>
+</section>
+
+<section class="page">
+ <div class="topline"><div class="brand"><span class="brandmark">+</span> HospitalGuru</div><span class="section-tag">02 / Procure &amp; receive</span></div>
+ <h2 class="title">From supplier order<br>to approved stock.</h2><p class="intro">Use this flow to demonstrate how purchasing and central-store receiving stay separate, reviewable steps.</p>
+ <div class="flow"><div class="flow-step"><b>Purchase order</b><span>Procurement Officer</span></div><div class="arrow">›</div><div class="flow-step"><b>Approval &amp; issue</b><span>Head Pharmacist / Procurement</span></div><div class="arrow">›</div><div class="flow-step"><b>Goods received note</b><span>DRF Store Keeper</span></div><div class="arrow">›</div><div class="flow-step"><b>Approve &amp; post</b><span>Head Pharmacist</span></div></div>
+ <ol class="steps">
+  <li><b>Create a purchase order.</b> Procurement selects the supplier and destination, adds medicines and quantities, and saves the order for authorized review.</li>
+  <li><b>Approve and issue the order.</b> The Head Pharmacist approves a pending order. Procurement then issues the approved order to the supplier.</li>
+  <li><b>Record the delivery at the central store.</b> The DRF Store Keeper starts a GRN and records supplier, invoice/delivery references, receipt date, medicine, batch, expiry, received/accepted/rejected quantities, and unit cost.</li>
+  <li><b>Save the GRN draft, then submit it.</b> A saved draft does not change inventory. Submit the completed GRN for approval.</li>
+  <li><b>Review and post.</b> The Head Pharmacist approves the receipt and posts it. Posting adds accepted quantities to central-store inventory and records the stock movement.</li>
+ </ol>
+ <div class="grid2">
+  <div class="card"><div class="num">A</div><h3>Check the delivery against the order</h3><p>Match the supplier, purchase order, product, batch and quantity. Record rejected quantities and a reason where applicable.</p></div>
+  <div class="card"><div class="num">B</div><h3>Post only after review</h3><p>Do not treat a draft or pending GRN as available stock. The approval and posting steps complete the receiving workflow.</p></div>
+ </div>
+ <div class="callout"><strong>Client demo narration</strong><p>“The supplier delivery is captured first, but stock only becomes available after the receiving record is reviewed and posted. This preserves a clear receiving trail.”</p></div>
+ <p class="note">Demo tip: use a sample supplier, purchase order and one medicine batch. Show the GRN status before and after approval/posting.</p>
+ <div class="footer"><span>HOSPITALGURU · CLIENT PRESENTATION GUIDE</span><span><b>02</b> / 06</span></div>
+</section>
+
+<section class="page">
+ <div class="topline"><div class="brand"><span class="brandmark">+</span> HospitalGuru</div><span class="section-tag">03 / Replenish pharmacy</span></div>
+ <h2 class="title">Request, approve,<br>dispatch, receive.</h2><p class="intro">The pharmacy asks for stock; the central store prepares and dispatches it; the destination confirms what physically arrived.</p>
+ <div class="flow"><div class="flow-step"><b>Request stock</b><span>Pharmacy Dispenser</span></div><div class="arrow">›</div><div class="flow-step"><b>Prepare transfer</b><span>DRF Store Keeper</span></div><div class="arrow">›</div><div class="flow-step"><b>Approve</b><span>Head Pharmacist</span></div><div class="arrow">›</div><div class="flow-step"><b>Dispatch</b><span>DRF Store Keeper</span></div><div class="arrow">›</div><div class="flow-step"><b>Confirm receipt</b><span>Pharmacy Supervisor</span></div></div>
+ <ol class="steps">
+  <li><b>Submit a pharmacy stock request.</b> Select catalogue medicines, enter quantities, set routine/urgent/critical priority, and explain the request. Submission does not move stock.</li>
+  <li><b>Prepare a transfer from the request.</b> The DRF Store Keeper selects eligible central-store batches and quantities. The linked request limits which medicines and quantities can be issued.</li>
+  <li><b>Submit for approval.</b> A submitted transfer waits for authorized approval. Stock is not yet dispatched.</li>
+  <li><b>Approve and dispatch.</b> The Head Pharmacist approves; the DRF Store Keeper dispatches. Stock then moves into transit and is not yet available for sale at the destination.</li>
+  <li><b>Confirm physical receipt.</b> The Pharmacy Supervisor records the quantity received. Any short receipt needs a discrepancy note; the transfer can remain partially received until resolved.</li>
+ </ol>
+ <div class="grid2">
+  <div class="card"><div class="smallcap">If stock needs to go back</div><h3>Use the return workflow</h3><p>The pharmacy submits a reason, source batch, quantity and condition. The Head Pharmacist reviews it; the DRF Store Keeper records physical receipt; an authorized inspection sets the final disposition.</p></div>
+  <div class="card"><div class="smallcap">Possible disposition</div><h3>Stock, quarantine or dispose</h3><p>Sealed/good and unexpired items may return to usable stock. Other items can be quarantined or disposed according to the inspected condition.</p></div>
+ </div>
+ <div class="callout"><strong>Client demo narration</strong><p>“A request is not a stock movement. The movement happens through approved dispatch, and the receiving pharmacy confirms the actual quantity at its end.”</p></div>
+ <div class="footer"><span>HOSPITALGURU · CLIENT PRESENTATION GUIDE</span><span><b>03</b> / 06</span></div>
+</section>
+
+<section class="page">
+ <div class="topline"><div class="brand"><span class="brandmark">+</span> HospitalGuru</div><span class="section-tag">04 / Dispense &amp; bill</span></div>
+ <h2 class="title">A controlled point<br>of sale workflow.</h2><p class="intro">Demonstrate an outpatient sale first, then show how inpatient patient and prescription details can be linked when needed.</p>
+ <div class="flow"><div class="flow-step"><b>Select sale type</b><span>Outpatient / Inpatient</span></div><div class="arrow">›</div><div class="flow-step"><b>Select patient / Rx</b><span>For inpatient sales</span></div><div class="arrow">›</div><div class="flow-step"><b>Add eligible stock</b><span>Batch &amp; quantity checks</span></div><div class="arrow">›</div><div class="flow-step"><b>Generate invoice</b><span>Quantity reserved</span></div><div class="arrow">›</div><div class="flow-step"><b>Submit &amp; verify payment</b><span>Cashier completes sale</span></div></div>
+ <ol class="steps">
+  <li><b>Choose the sale type.</b> For inpatient dispensing, find and verify the patient record. Select an active prescription if one applies.</li>
+  <li><b>Build the sale from eligible batches.</b> Search by medicine or batch, review available quantity and price, then add the required quantity. Expired, quarantined and already reserved stock is excluded.</li>
+  <li><b>Respect prescription balances.</b> When linked, only medicines on that prescription can be added and quantities cannot exceed the remaining prescribed balance. Medicines marked as prescription-required need a valid linked prescription.</li>
+  <li><b>Generate the invoice.</b> The invoice reserves stock while payment is pending. If it is cancelled, the reserved quantities are released.</li>
+  <li><b>Submit payment evidence.</b> The dispenser records cash received or a bank/POS reference and submits it for verification.</li>
+  <li><b>Verify independently.</b> A cashier checks the payment and verifies or rejects it. The person who submitted the payment cannot verify their own submission.</li>
+  <li><b>Complete and issue the receipt.</b> Successful verification completes the sale, posts the inventory deduction and updates the linked prescription. Open the sale receipt for printing.</li>
+ </ol>
+ <div class="grid2">
+  <div class="card"><div class="smallcap">Show on screen</div><h3>Live available stock</h3><p>Batch expiry, available quantity, current selling price and invoice total are visible as the sale is built.</p></div>
+  <div class="card"><div class="smallcap">Explain the handoff</div><h3>Payment is not self-approved</h3><p>Evidence submission and cashier verification are separate actions, supporting a clear payment control.</p></div>
+ </div>
+ <div class="callout"><strong>Client demo narration</strong><p>“The invoice reserves the selected batch, but the stock deduction is finalized only after an authorized cashier verifies the payment.”</p></div>
+ <div class="footer"><span>HOSPITALGURU · CLIENT PRESENTATION GUIDE</span><span><b>04</b> / 06</span></div>
+</section>
+
+<section class="page">
+ <div class="topline"><div class="brand"><span class="brandmark">+</span> HospitalGuru</div><span class="section-tag">05 / Reconcile &amp; review</span></div>
+ <h2 class="title">Close the day<br>with a clear record.</h2><p class="intro">Use the supervisor and cashier workspaces to reconcile payment methods, resolve differences and preserve the close snapshot.</p>
+ <div class="grid2">
+  <div class="card"><div class="num">1</div><h3>Open the business day</h3><p>The Pharmacy Supervisor opens the controlled shift before the team records sales for the day.</p></div>
+  <div class="card"><div class="num">2</div><h3>Clear payment checks</h3><p>The Cashier reviews pending evidence and records verification outcomes. Rejected attempts remain visible for follow-up.</p></div>
+  <div class="card"><div class="num">3</div><h3>Reconcile each tender</h3><p>Compare expected totals for cash, bank transfer and POS terminal with the confirmed amounts. Explain any discrepancy.</p></div>
+  <div class="card"><div class="num">4</div><h3>Review inventory activity</h3><p>Check recorded movement types such as sales, transfers, returns and adjustments against the day’s work.</p></div>
+  <div class="card"><div class="num">5</div><h3>Submit reconciliation</h3><p>Save the cashier reconciliation for supervisor review. Outstanding payment checks must be cleared before the day can be closed.</p></div>
+  <div class="card"><div class="num">6</div><h3>Close the day</h3><p>The Pharmacy Supervisor records notes and closes the day. The platform saves an audited close snapshot.</p></div>
+ </div>
+ <h3 style="margin:8mm 0 2mm">Oversight and accountability</h3>
+ <ul class="checklist"><li>Dashboards summarize authorized operational records.</li><li>Audit views show recent events, users, actions, references and outcomes.</li><li>Open system-health events and backup issues are surfaced to authorized administrators.</li><li>Administrative notifications appear in the account’s task list.</li><li>Role and location permissions shape which workspaces, records and actions are available.</li></ul>
+ <div class="callout"><strong>Client demo narration</strong><p>“The close brings payment and inventory activity together, while the audit trail lets authorized reviewers trace important actions back to their records.”</p></div>
+ <div class="footer"><span>HOSPITALGURU · CLIENT PRESENTATION GUIDE</span><span><b>05</b> / 06</span></div>
+</section>
+
+<section class="page">
+ <div class="topline"><div class="brand"><span class="brandmark">+</span> HospitalGuru</div><span class="section-tag">06 / Run the client walkthrough</span></div>
+ <h2 class="title">A focused 12-minute demo.</h2><p class="intro">Use one sample medicine, one pharmacy, one central-store batch and prepared demo users. Keep the story tied to the client’s current process.</p>
+ <table class="table"><thead><tr><th>Time</th><th>Show</th><th>Say</th></tr></thead><tbody>
+  <tr><td class="nowrap">1 min</td><td>Sign in and role dashboard</td><td>“Staff see the workspace and records assigned to their role and location.”</td></tr>
+  <tr><td class="nowrap">2 min</td><td>Purchase order and GRN flow</td><td>“Receiving is recorded, reviewed and posted before accepted goods become stock.”</td></tr>
+  <tr><td class="nowrap">2 min</td><td>Pharmacy stock request and transfer</td><td>“Requests, approvals, dispatch and receipt are distinct steps with clear owners.”</td></tr>
+  <tr><td class="nowrap">4 min</td><td>POS invoice, payment and verification</td><td>“The invoice reserves stock; separate cashier verification completes the sale.”</td></tr>
+  <tr><td class="nowrap">2 min</td><td>Reconciliation, audit and alerts</td><td>“Supervisors close the day, and authorized users can review activity across the platform.”</td></tr>
+  <tr><td class="nowrap">1 min</td><td>Questions and next steps</td><td>“We can map these roles and approval steps to your operating policy before rollout.”</td></tr>
+ </tbody></table>
+ <div class="grid2">
+  <div><h3 style="margin:3mm 0">Before go-live</h3><ul class="checklist"><li>Confirm locations, user accounts, role permissions and approval owners.</li><li>Load and validate the medicine catalogue, suppliers, opening stock and reorder settings.</li><li>Agree cash, transfer, POS and day-close procedures with pharmacy and finance.</li><li>Train approvers and test a complete purchase-to-dispense scenario.</li><li>Configure verified email delivery before offering self-service password recovery.</li></ul></div>
+  <div><h3 style="margin:3mm 0">Present scope honestly</h3><ul class="checklist"><li>Barcode scanning is not available in the current POS screen.</li><li>Password reset emails require a verified hospital email delivery service; until configured, staff should contact hospital IT.</li><li>Dashboard details depend on the corresponding platform records and the signed-in user’s permissions.</li><li>Agree clinical, financial and regulatory procedures with the hospital before production use.</li></ul></div>
+ </div>
+ <div class="closing"><strong>Care, organized.</strong><p>HospitalGuru brings pharmacy inventory, dispensing and management into one accountable operational flow — supporting trusted care and better operations.</p></div>
+ <div class="footer"><span>HOSPITALGURU · CLIENT PRESENTATION GUIDE</span><span><b>06</b> / 06</span></div>
+</section>
+</body></html>

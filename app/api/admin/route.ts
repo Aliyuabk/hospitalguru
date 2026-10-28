@@ -11,7 +11,7 @@ const access: Record<string,string[]> = {
   users:['super_administrator'], roles:['super_administrator'], locations:['super_administrator','cmd_executive','system_administrator'], settings:['super_administrator','system_administrator'], numbering:['super_administrator'],
   drugs:['super_administrator','head_pharmacist','drf_store_keeper','pharmacy_dispenser','cmd_executive','procurement_officer','internal_auditor'],
   suppliers:['super_administrator','drf_store_keeper','procurement_officer','internal_auditor'], audit:['super_administrator','cmd_executive','pharmacy_supervisor','internal_auditor','system_administrator'], health:['super_administrator','system_administrator'],
-  inventory:['cmd_executive','head_pharmacist','drf_store_keeper','pharmacy_dispenser','pharmacy_supervisor','internal_auditor'], sales:['cmd_executive','pharmacy_supervisor','pharmacy_dispenser','cashier','internal_auditor'],
+  inventory:['super_administrator','cmd_executive','head_pharmacist','drf_store_keeper','pharmacy_dispenser','pharmacy_supervisor','internal_auditor'], sales:['cmd_executive','pharmacy_supervisor','pharmacy_dispenser','cashier','internal_auditor'],
   losses:['cmd_executive','head_pharmacist','drf_store_keeper','pharmacy_dispenser','pharmacy_supervisor','internal_auditor'], grns:['cmd_executive','head_pharmacist','drf_store_keeper','internal_auditor'], adjustments:['cmd_executive','head_pharmacist','internal_auditor'], writeoffs:['cmd_executive','head_pharmacist','drf_store_keeper','internal_auditor'],
   transfers:['cmd_executive','drf_store_keeper','head_pharmacist','pharmacy_supervisor','internal_auditor'], transfer_detail:['cmd_executive','drf_store_keeper','head_pharmacist','pharmacy_supervisor','internal_auditor'], audit_detail:['super_administrator','cmd_executive','pharmacy_supervisor','internal_auditor','system_administrator'], requests:['drf_store_keeper','pharmacy_dispenser','pharmacy_supervisor'], returns:['cmd_executive','drf_store_keeper','head_pharmacist','pharmacy_dispenser','pharmacy_supervisor','internal_auditor'],
   payments:['cashier','pharmacy_supervisor','cmd_executive','internal_auditor'], refunds:['cashier','pharmacy_supervisor','cmd_executive','internal_auditor'], stock_counts:['drf_store_keeper','internal_auditor'], reconciliation:['cashier','pharmacy_supervisor','internal_auditor'], procurement:['procurement_officer','head_pharmacist','internal_auditor'], purchase_requests:['procurement_officer','internal_auditor'], ledger:['internal_auditor','head_pharmacist','drf_store_keeper','cmd_executive'],
@@ -163,6 +163,28 @@ export async function GET(request: Request) {
     await ensureRolePermissionDefaults();
     const params=new URL(request.url).searchParams;
     const resource=params.get('resource')||'dashboard';
+    if(resource==='dashboard_overview'){
+      if(user.role_key!=='super_administrator')return NextResponse.json({error:'Access denied.'},{status:403});
+        const [auditView,healthView,notificationView,inventoryView]=await Promise.all([
+        hasPermission(user.role_key,'audit_logs','view'),
+        hasPermission(user.role_key,'system_health','view'),
+        hasPermission(user.role_key,'notifications','view'),
+          hasPermission(user.role_key,'inventory','view'),
+      ]);
+      if(!auditView||!healthView||!notificationView)return NextResponse.json({error:'Access denied.'},{status:403});
+        const range=params.get('range');const days=range==='Today'?0:range==='Last 7 days'?6:29;
+        const [[activity],[health],[backups],[tasks],[inventory],[auditByDay],[salesByDay]]=await Promise.all([
+        db.query('SELECT a.id,a.occurred_at,u.name actor_name,a.action,a.module,a.reference_no,a.entity_id,a.outcome FROM audit_logs a LEFT JOIN users u ON u.id=a.actor_user_id ORDER BY a.occurred_at DESC LIMIT 6'),
+        db.query("SELECT id,component,severity,status,message,first_seen_at,last_seen_at FROM system_health_events WHERE status IN ('open','acknowledged') ORDER BY FIELD(status,'open','acknowledged'),last_seen_at DESC LIMIT 6"),
+        db.query("SELECT id,started_at,completed_at,status,destination_label,error_summary FROM backup_runs WHERE status IN ('failed','running') ORDER BY started_at DESC LIMIT 6"),
+        db.query("SELECT id,category,severity,title,message,target_path,created_at FROM notifications WHERE user_id=? AND read_at IS NULL ORDER BY FIELD(severity,'critical','warning','info','success'),created_at DESC LIMIT 6",[user.id]),
+          inventoryView?db.query("SELECT l.id location_id,l.code,l.name,COALESCE(SUM(CASE WHEN b.status='usable' AND b.expiry_date>=CURDATE() THEN b.quantity_on_hand*b.cost_price_ngn ELSE 0 END),0) stock_value_ngn FROM locations l LEFT JOIN stock_batches b ON b.location_id=l.id WHERE l.is_active=1 GROUP BY l.id,l.code,l.name ORDER BY l.name"):Promise.resolve([[]]),
+          db.query(`SELECT DATE(occurred_at) day,COUNT(*) user_activity,SUM(CASE WHEN outcome IN ('failed','rejected','denied') THEN 1 ELSE 0 END) failed_operations FROM audit_logs WHERE occurred_at>=DATE_SUB(CURDATE(),INTERVAL ${days} DAY) GROUP BY DATE(occurred_at)`),
+          db.query(`SELECT DATE(sold_at) day,COUNT(*) transactions_created FROM sales WHERE sold_at>=DATE_SUB(CURDATE(),INTERVAL ${days} DAY) GROUP BY DATE(sold_at)`),
+      ]);
+        const byDay=new Map<string,any>();for(const row of [...auditByDay as any[],...salesByDay as any[]]){const key=new Date(row.day).toISOString().slice(0,10);const point=byDay.get(key)||{day:key,user_activity:0,transactions_created:0,failed_operations:0};point.user_activity=Number(point.user_activity)+Number(row.user_activity||0);point.transactions_created=Number(point.transactions_created)+Number(row.transactions_created||0);point.failed_operations=Number(point.failed_operations)+Number(row.failed_operations||0);byDay.set(key,point)}
+        return NextResponse.json({data:{activity,health,backups,tasks,inventory,dailyActivity:[...byDay.values()].sort((a,b)=>a.day.localeCompare(b.day))}});
+    }
     if(!sql[resource]) return NextResponse.json({error:'Unknown resource.'},{status:404});
     if(resource==='my_permissions'){}
     else if(resource==='roles'||resource==='role_permissions'){if(user.role_key!=='super_administrator')return NextResponse.json({error:'Access denied.'},{status:403});}

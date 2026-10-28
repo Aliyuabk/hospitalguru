@@ -19,13 +19,13 @@ export function verifyPassword(password: string, stored: string) {
   return expected.length === actual.length && timingSafeEqual(expected, actual);
 }
 
-export type SessionUser = { id: number; name: string; username: string; email: string | null; role_key: string; role_name: string; location_id: number | null; location_name: string | null; location_ids?: string; location_names?: string };
+export type SessionUser = { id: number; name: string; username: string; email: string | null; role_key: string; role_name: string; location_id: number | null; location_name: string | null; location_ids?: string; location_names?: string; staff_id?: string | null; last_login_at?: string | null };
 
 export async function getSessionUser(): Promise<SessionUser | null> {
   const token = cookies().get(SESSION_COOKIE)?.value;
   if (!token) return null;
   const [rows] = await db.execute(
-    `SELECT u.id,u.name,u.username,u.email,r.role_key,r.name role_name,u.primary_location_id location_id,l.name location_name,
+    `SELECT u.id,u.name,u.username,u.email,u.staff_id,u.last_login_at,r.role_key,r.name role_name,u.primary_location_id location_id,l.name location_name,
        COALESCE((SELECT GROUP_CONCAT(ul.location_id ORDER BY ul.is_default DESC,ul.location_id) FROM user_locations ul WHERE ul.user_id=u.id),CAST(u.primary_location_id AS CHAR),'') location_ids,
        COALESCE((SELECT GROUP_CONCAT(loc.name ORDER BY ul.is_default DESC,loc.name SEPARATOR ', ') FROM user_locations ul JOIN locations loc ON loc.id=ul.location_id WHERE ul.user_id=u.id),l.name,'') location_names
      FROM access_tokens t JOIN users u ON u.id=t.user_id JOIN roles r ON r.id=u.role_id

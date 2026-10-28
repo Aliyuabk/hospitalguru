@@ -93,7 +93,7 @@ INSERT INTO synthetic_role_grants(role_key,permission_key) VALUES
 ('super_administrator','settings.view'),('super_administrator','settings.edit'),
 ('super_administrator','drug_catalogue.view'),('super_administrator','drug_catalogue.create'),('super_administrator','drug_catalogue.edit'),
 ('super_administrator','suppliers.view'),('super_administrator','suppliers.create'),('super_administrator','suppliers.edit'),
-('super_administrator','audit_logs.view'),('super_administrator','system_health.view'),
+('super_administrator','inventory.view'),('super_administrator','audit_logs.view'),('super_administrator','system_health.view'),
 -- CMD: executive read-only oversight.
 ('cmd_executive','dashboard.view'),('cmd_executive','notifications.view'),('cmd_executive','locations.view'),
 ('cmd_executive','inventory.view'),('cmd_executive','sales.view'),
