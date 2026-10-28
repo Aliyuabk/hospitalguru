@@ -27,3 +27,4 @@ Passwords are hashed with Node's scrypt implementation. Session tokens are rando
 ## Current implementation boundary
 
 Authentication, initial administrator setup, user/location/catalogue/supplier creation, account suspension, audit writes for supported administration changes, and authorized data reads use MySQL. The remaining transaction pages are structured from the MVP and clearly mark actions that still require workflow endpoints. Password recovery also needs a verified hospital email delivery service before it can issue reset links.
+

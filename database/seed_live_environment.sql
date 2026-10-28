@@ -4,10 +4,8 @@
 -- LOCAL/QA/STAGING ONLY. All people, suppliers, patients, quantities, prices, and transactions below are invented.
 -- Re-runnable test fixture. It resets records identified by QA keys; never run against a production database.
 
-USE hospitalguru;
-SET NAMES utf8mb4;
-SET time_zone = '+00:00';
-START TRANSACTION;
+ 
+ 
 
 -- Ensure the initial hospital locations exist; preserve existing addresses/settings.
 INSERT INTO locations(code,name,type,is_active) VALUES
